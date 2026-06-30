@@ -1,0 +1,6 @@
+bin/**
+bin-int/**
+obj/**
+.vscode/**
+*.make
+Makefile

@@ -68,13 +68,14 @@ project "GLFW"
 -- ENGINE
 --------------------------------------------------------------------------------
 project "HonseEngine"
-	kind "ConsoleApp"
+	kind "SharedLib"
     language "C++"
     cppdialect "C++17"
     targetdir "bin/%{cfg.buildcfg}"
     objdir "bin-int/%{cfg.buildcfg}"
 
     files {
+        "internal/**.cpp",
         "src/**.h",
         "src/**.cpp",
 		"ext/glad.c"
@@ -95,3 +96,25 @@ project "HonseEngine"
     filter "configurations:Release"
         defines { "NDEBUG" }
         optimize "On"
+
+--------------------------------------------------------------------------------
+-- EXAMPLE GAME
+--------------------------------------------------------------------------------
+project "Pong"
+	kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    targetdir "bin/%{cfg.buildcfg}"
+    objdir "bin-int/%{cfg.buildcfg}"
+
+    files {
+        "examples/pong/src/**.cpp"
+    }
+
+    includedirs {
+        "include"
+    }
+
+    links {
+		"HonseEngine"
+	}
