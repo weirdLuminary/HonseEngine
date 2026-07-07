@@ -1,89 +1,105 @@
 #pragma once
 #include <string>
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Shader {
-
-private:
-
-    GLuint m_RendererID = 0;
-
-    static GLuint Compile(const std::string& path, GLenum type);
-    static bool CheckCompileStatus(GLuint shader);
+namespace hs {
+    
 
 
-public:
+    struct Uniform {
 
-    GLuint vertexShader = 0;
-    GLuint fragmentShader = 0;
+        int ID;
 
-    Shader(const std::string& vertexPath, const std::string& fragmentPath);
-    Shader(GLuint vertexShader, const std::string& fragmentPath);
-    Shader(const std::string& vertexPath, GLuint fragmentShader);
-    Shader(GLuint vertexShader, GLuint fragmentShader);
+        void Set(int value);
+        void Set(float value);
+        void Set(const glm::ivec2& value);
+        void Set(const glm::vec2& value);
+        void Set(const glm::ivec3& value);
+        void Set(const glm::vec3& value);
+        void Set(const glm::mat4& value);
+        void Set(const glm::vec4& value);
+        void Set(const int* values, int count);
 
-    ~Shader();
+    };
 
-    void Bind() const;
-    void Unbind() const;
+    class Shader {
 
-    inline GLuint GetID() { return m_RendererID; }
+    private:
 
-    int FindUniform(const std::string& name);
+        unsigned int m_RendererID = 0;
 
-    template<typename T>
-    void SetUniform(int uniform, const T& value) { static_assert(false); }
+        unsigned int vertexShader = 0;
+        unsigned int fragmentShader = 0;
 
-    Shader(const Shader&) = delete;
-    Shader& operator=(const Shader&) = delete;
+        const char* defaultVertexSrc = R"(#version 330 core
+            layout(location = 0) in vec4 a_Position;
+            layout(location = 1) in vec2 a_TexCoord;
+            layout(location = 3) in int  a_TextureID;
+            layout(location = 2) in vec4 a_Color;
 
-    Shader(Shader&& other) noexcept
-    {
-        m_RendererID = other.m_RendererID;
-        other.m_RendererID = 0;
-    }
+            out vec2 v_TexCoord;
+            flat out int v_TextureID;
+            out vec4 v_Color;
 
-    Shader& operator=(Shader&& other) noexcept
-    {
-        if (this != &other)
+            void main()
+            {
+                gl_Position = a_Position;
+                v_TexCoord = a_TexCoord;
+                v_TextureID = a_TextureID;
+                v_Color = a_Color;
+            }
+            )";
+
+        const char* defaultFragmentSrc = R"(#version 330 core
+            in vec2 v_TexCoord;
+            flat in int v_TextureID;
+            in vec4 v_Color;
+
+            out vec4 FragColor;
+
+            uniform sampler2D u_Textures[16];
+
+            void main()
+            {
+                FragColor = texture(u_Textures[v_TextureID], v_TexCoord) * v_Color;
+            }
+            )";
+
+        static unsigned int Compile(const std::string& path, int type);
+        static bool CheckCompileStatus(unsigned int shader);
+
+        void Bind() const;
+        void Unbind() const;
+
+        friend class Renderer;
+
+    public:
+
+        Shader FromSource(const std::string& vertexSrc, const std::string& fragSrc);    // For custom vertex shader
+        Shader FromSource(const std::string& fragSrc);                                  // For default vertex shader
+
+        Shader(const std::string& vertexPath, const std::string& fragmentPath);         // For custom vertex shader
+        Shader(const std::string& fragmentPath);                                        // For default vertex shader
+        Shader();                                                                       // Default implementation for both shaders
+        ~Shader();
+
+        Uniform FindUniform(const std::string& name);
+
+        Shader(const Shader&) = delete;
+        Shader& operator=(const Shader&) = delete;
+
+        Shader(Shader&& other) noexcept
         {
-            glDeleteProgram(m_RendererID);
             m_RendererID = other.m_RendererID;
             other.m_RendererID = 0;
         }
-        return *this;
-    }
 
-};
+        Shader& operator=(Shader&& other) noexcept;
 
-template<>
-inline void Shader::SetUniform<float>(int uniform, const float& value) { 
-    glUniform1f(uniform, value);
-}
+    };
 
-template<>
-inline void Shader::SetUniform<int>(int uniform, const int& value) { 
-    glUniform1i(uniform, value);
-}
+   
 
-template<>
-inline void Shader::SetUniform<glm::vec2>(int uniform, const glm::vec2& value) { 
-    glUniform2f(uniform, value.x, value.y);
-}
 
-template<>
-inline void Shader::SetUniform<glm::ivec2>(int uniform, const glm::vec<2, int>& value) { 
-    glUniform2i(uniform, value.x, value.y);
-}
-
-template<>
-inline void Shader::SetUniform<glm::vec3>(int uniform, const glm::vec3& value) { 
-    glUniform3f(uniform, value.x, value.y, value.z);
-}
-
-template<>
-inline void Shader::SetUniform<glm::mat4>(int uniform, const glm::mat4& value) { 
-    glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(value));
 }

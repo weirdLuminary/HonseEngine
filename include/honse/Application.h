@@ -1,4 +1,5 @@
 #pragma once
+#include "platform/Window.h"
 
 namespace hs {
 
@@ -8,7 +9,8 @@ namespace hs {
         Application();
         virtual ~Application();
 
-        virtual void Run();
+        virtual void Start();
+        virtual void Update();
 
     };
 

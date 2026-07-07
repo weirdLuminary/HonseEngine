@@ -4,6 +4,7 @@
 
 struct VertexAttribute {
 
+    GLuint location;
     GLint count;
     GLenum type;
     GLboolean normalized = GL_FALSE;
@@ -34,6 +35,8 @@ private:
     GLuint m_RendererID = 0;
 
 public:
+
+    void Init();
 
     VertexArray();
     

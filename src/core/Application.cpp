@@ -6,9 +6,7 @@ namespace hs {
 
     Application::~Application() = default;
 
-    void Application::Run()
-    {
-        // Default implementation
-    }
+    void Application::Start() {};
+    void Application::Update() {};
 
 }

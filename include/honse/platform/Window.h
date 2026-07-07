@@ -1,6 +1,8 @@
 #pragma once
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <string>
+#include <glm/glm.hpp>
 
 namespace hs
 {
@@ -8,24 +10,18 @@ namespace hs
 class Window
 {
 public:
-    Window(int width, int height, std::string_view title);
+    Window(int width, int height, const char* title);
     ~Window();
 
     bool ShouldClose() const;
+    void Update() const;
 
-    void PollEvents();
-    void SwapBuffers();
-
-    int Width() const;
-    int Height() const;
+    glm::vec2 GetSize();
 
     GLFWwindow* NativeHandle() const;
 
 private:
     GLFWwindow* m_Window = nullptr;
-
-    int m_Width;
-    int m_Height;
 };
 
 }

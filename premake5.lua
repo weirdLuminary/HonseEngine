@@ -1,6 +1,15 @@
 workspace "HonseEngine"
    	configurations { "Debug", "Release" }
 
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+        symbols "On"
+
+    filter "configurations:Release"
+        defines { "NDEBUG" }
+        optimize "On"
+
+    filter {}
 
 --------------------------------------------------------------------------------
 -- GLFW (STATIC, X11 ONLY)
@@ -29,9 +38,10 @@ project "GLFW"
 		"ext/glfw-3.4/src/platform.c",
 		"ext/glfw-3.4/src/window.c",
 		"ext/glfw-3.4/src/vulkan.c",
+		"ext/glfw-3.4/src/null_*.c",
 
-		-- X11 backend
-		"ext/glfw-3.4/src/x11_*.c",
+        -- X11 backend
+        "ext/glfw-3.4/src/x11_*.c",
 		"ext/glfw-3.4/src/glx_context.c",
 		"ext/glfw-3.4/src/xkb_unicode.c",
 
@@ -61,14 +71,24 @@ project "GLFW"
 			"ext/glfw-3.4/src/wl_*.c",
 			"ext/glfw-3.4/src/win32_*.c",
 			"ext/glfw-3.4/src/cocoa_*.c",
-			"ext/glfw-3.4/src/null_*.c"
     	}
+
+    filter "system:windows"
+        links {
+            "GLFW",
+            "opengl32",
+            "gdi32",
+            "user32",
+            "shell32"
+        }
+
+    filter {}
 
 --------------------------------------------------------------------------------
 -- ENGINE
 --------------------------------------------------------------------------------
 project "HonseEngine"
-	kind "SharedLib"
+	kind "StaticLib"
     language "C++"
     cppdialect "C++17"
     targetdir "bin/%{cfg.buildcfg}"
@@ -82,20 +102,22 @@ project "HonseEngine"
     }
 
     includedirs {
-        "include"
+        "include",
+        "internal"
     }
 
     links {
-		"glfw"
+		"GLFW"
 	}
 
-    filter "configurations:Debug"
-        defines { "DEBUG" }
-        symbols "On"
+    filter "system:windows" 
+        defines { "_WIN" }
 
-    filter "configurations:Release"
-        defines { "NDEBUG" }
-        optimize "On"
+    filter "system:linux"
+        defines { "_LINUX" } 
+
+    
+    filter {}
 
 --------------------------------------------------------------------------------
 -- EXAMPLE GAME
@@ -112,9 +134,10 @@ project "Pong"
     }
 
     includedirs {
-        "include"
+        "include",
     }
 
     links {
-		"HonseEngine"
+		"HonseEngine",
+        "GLFW"
 	}

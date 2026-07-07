@@ -1,23 +1,35 @@
 #pragma once
 #include <glad/glad.h>
 #include <string>
+#include <memory>
 
-class Texture {
+namespace hs {
 
-private:
+    class Texture {
 
-    GLuint m_RendererID = 0;
+    public:
 
-public:
+        int width, height, channels;
 
-    int width, height, channels;
-    unsigned char *data;
+        Texture();
+        Texture(const std::string& path);
+        ~Texture();
 
-    Texture(const std::string& path);
-    ~Texture();
+        Texture(const Texture&) = delete;
+        Texture& operator=(const Texture&) = delete;
 
-    void Bind(GLenum slot) const;
-    void Unbind() const;
+        Texture(Texture&&) noexcept;
+        Texture& operator=(Texture&&) noexcept;
 
+    private:
 
-};
+        void Bind(GLenum slot) const;
+        unsigned int GetHandle();
+
+        struct Impl;
+        std::unique_ptr<Impl> impl;
+
+        friend class Renderer;
+    };
+
+}

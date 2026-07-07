@@ -1,0 +1,10 @@
+... 
+OpenGL wrappers, Object, TransformObject & Sprite, 
+
+
+06.07.26
+Finished basic scene manager; objects can now be added to the scene and rendered via the barebones batch renderer (doesn't currently work)
+
+
+07.07.26
+Finished batch renderer (the issue yesterday was sprite opacity and not actually the renderer)

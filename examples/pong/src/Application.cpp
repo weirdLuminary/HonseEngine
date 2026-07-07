@@ -1,28 +1,26 @@
-#include <honse/Engine.h>
+#include "Application.h"
 
-class Pong : public hs::Application {
+Pong::Pong() {}
+Pong::~Pong() {}
 
-public:
+hs::Texture tex;
+hs::Texture texA;
 
-    Pong() {
-        
-    }
+void Pong::Start() {
 
-    ~Pong() {
+    tex = hs::Texture("res/container.jpg");
+    texA = hs::Texture("res/container2.png");
+
+    auto scene = std::make_unique<hs::Scene>();
+
+    scene->Create<hs::Sprite>(&tex);
+    scene->Create<hs::Sprite>(&texA).position = glm::vec2(100.0f);
+
+    hs::SceneManager::Load(std::move(scene));
+
+}
+
+void Pong::Update() {
 
 
-    }
-
-    void Run() {
-        while (true)
-        {
-            /* code */
-        }
-        
-    }
-
-};
-
-hs::Application* hs::CreateApplication() {
-    return new Pong();
 }

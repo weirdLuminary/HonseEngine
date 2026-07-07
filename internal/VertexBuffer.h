@@ -9,12 +9,15 @@ private:
 
 public:
 
+    void Init(const void* data, unsigned int size);
+
     VertexBuffer() : m_RendererID(0) {}
     VertexBuffer(const void* data, unsigned int size);
     ~VertexBuffer();
 
     void Bind() const;
     void Unbind() const;
+    void SetData(const void* data, unsigned int size) const;
 
     // Remove copying
     VertexBuffer(const VertexBuffer&) = delete;
@@ -30,7 +33,8 @@ public:
     {
         if (this != &other)
         {
-            glDeleteBuffers(1, &m_RendererID);
+            if (m_RendererID != 0)
+                glDeleteBuffers(1, &m_RendererID);  
 
             m_RendererID = other.m_RendererID;
             other.m_RendererID = 0;
