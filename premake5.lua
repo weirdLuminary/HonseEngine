@@ -85,6 +85,28 @@ project "GLFW"
     filter {}
 
 --------------------------------------------------------------------------------
+-- LECS
+--------------------------------------------------------------------------------
+project "LECS"
+    kind "StaticLib"
+    language "C++"
+
+    targetdir "bin/%{cfg.buildcfg}"
+    objdir "bin-int/%{cfg.buildcfg}"
+
+    includedirs {
+        "ext/lecs/include"
+    }
+
+    files {
+		"ext/lecs/src/**.cpp"
+	}
+
+
+    filter {}
+
+
+--------------------------------------------------------------------------------
 -- ENGINE
 --------------------------------------------------------------------------------
 project "HonseEngine"
@@ -107,7 +129,8 @@ project "HonseEngine"
     }
 
     links {
-		"GLFW"
+		"GLFW",
+        "lecs"
 	}
 
     filter "system:windows" 

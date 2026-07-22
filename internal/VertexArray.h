@@ -41,9 +41,31 @@ public:
     VertexArray();
     
     void Bind() const;
-    void Unbind() const;
+    static void Unbind();
 
-   void AddBuffer(const VertexBuffer& vb, const std::vector<VertexAttribute>& layout);
+    void AddBuffer(const VertexBuffer& vb, const std::vector<VertexAttribute>& layout);
+
+    VertexArray(const VertexArray&) = delete;
+    VertexArray& operator=(const VertexArray&) = delete;
+
+    VertexArray(VertexArray&& other) noexcept
+    : m_RendererID(other.m_RendererID)
+    {
+        other.m_RendererID = 0;
+    }
+
+    VertexArray& operator=(VertexArray&& other) noexcept
+    {
+        if (this != &other)
+        {
+            if (m_RendererID != 0)
+                glDeleteVertexArrays(1, &m_RendererID);  
+
+            m_RendererID = other.m_RendererID;
+            other.m_RendererID = 0;
+        }
+        return *this;
+    }
 
 
 };

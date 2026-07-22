@@ -16,7 +16,7 @@ public:
     ~IndexBuffer();
 
     void Bind() const;
-    void Unbind() const;
+    static void Unbind();
     void SetData(const void* data, unsigned int size) const;
 
     IndexBuffer(IndexBuffer&& other) noexcept

@@ -1,14 +1,22 @@
 #include <honse/platform/Input.h>
 #include <GLFW/glfw3.h>
 
-bool Input::IsKeyDown(int key) {
+bool hs::Input::IsKeyDown(Key key) {
 
     return glfwGetKey(glfwGetCurrentContext(), key) == GLFW_PRESS;
 
 } 
 
-bool Input::IsMouseButtonDown(int button) {
+bool hs::Input::IsMouseButtonDown(int button) {
 
     return glfwGetMouseButton(glfwGetCurrentContext(), button) == GLFW_PRESS;
+
+}
+
+glm::vec2 hs::Input::GetMousePosition() {
+
+    double x, y;
+    glfwGetCursorPos(glfwGetCurrentContext(), &x, &y);
+    return { x, y };
 
 }

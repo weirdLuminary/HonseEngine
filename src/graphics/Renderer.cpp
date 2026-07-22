@@ -6,7 +6,12 @@
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
 #include "SpriteVertex.h"
+#include "Query.h"
+
 #include <honse/graphics/Texture.h>
+#include <honse/graphics/Camera.h>
+#include <honse/modules/profiling/Profiling.h>
+#include <honse/modules/resources/ResourceManager.h>
 
 #include <iostream>
 
@@ -33,22 +38,26 @@ struct Renderer::Impl {
     IndexBuffer quadEB;
 
     glm::mat4 projection;
-    Shader defaultShader;
+
+    Query frameQuery;
+    Query primitiveQuery;
+    unsigned int drawCalls;
 
     std::vector<SpriteVertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<GLuint> textureSlots;
+    std::shared_ptr<Shader> shader;
 
     unsigned int spriteCount = 0;
     const size_t MAX_SPRITES = 1000;
     GLint MAX_TEXTURES = 16;
 
-    
-
     void initRenderData() {
 
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        printf("%s\n", glGetString(GL_VERSION));
+        // glEnable(GL_DEBUG_OUTPUT);
+        // glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glEnable(GL_BLEND);
 
         glDebugMessageCallback(GLDebugCallback, nullptr);
 
@@ -72,15 +81,15 @@ struct Renderer::Impl {
         }
 
         projection = glm::ortho(-800.0f, 800.0f, -800.0f, 800.0f);
-        defaultShader = Shader();
 
         int samplers[16];
 
         for (int i = 0; i < 16; i++)
             samplers[i] = i;
 
-        defaultShader.Bind();
-        defaultShader.FindUniform("u_Textures").Set(samplers, 16);
+        shader = hs::ResourceManager::Load<hs::Shader>("basic");
+        shader->Bind();
+        shader->FindUniform("u_Textures").Set(samplers, 16);
 
         quadVA.Init();
         quadVA.Bind();
@@ -100,6 +109,8 @@ struct Renderer::Impl {
             { 3, 1, GL_INT   } // Texture ID
         });
 
+        frameQuery = Query(GL_TIME_ELAPSED);
+        primitiveQuery = Query(GL_PRIMITIVES_GENERATED);
     }
 
     int GetTextureSlot(GLuint handle)
@@ -151,16 +162,16 @@ void Renderer::Submit(const hs::Sprite& sprite) {
     auto& position = sprite.position;
     auto& pivot = sprite.pivot;
     auto size = sprite.GetSize();
+    auto scale = sprite.scale;
+    auto& rotation = sprite.rotation;
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(position - pivot * size, 0.0f)); 
+    glm::mat4 model(1.0f);
 
-    model = glm::translate(model, glm::vec3(pivot.x * size.x, pivot.y * size.y, 0.0f)); 
-    model = glm::rotate(model, glm::radians(sprite.rotation), glm::vec3(0.0f, 0.0f, 1.0f)); 
-    model = glm::translate(model, glm::vec3(-pivot.x * size.x, -pivot.y * size.y, 0.0f)); // Bring vertices back so that the pivot behaves as it should
-
-    model = glm::scale(model, glm::vec3(size, 1.0f)); 
-
+    model = glm::translate(model, glm::vec3(position, sprite.zIndex));
+    model = glm::rotate(model, glm::radians(rotation), glm::vec3(0,0,1));
+    model = glm::scale(model, glm::vec3(size * scale, 1.0f));
+    model = glm::translate(model, glm::vec3(-pivot, 0.0f));
+    
     ///// GENERATE VERTICES
 
     int slot = impl->GetTextureSlot(sprite.material->texture->GetHandle());
@@ -180,7 +191,8 @@ void Renderer::Submit(const hs::Sprite& sprite) {
     };
 
     for(SpriteVertex& vertex : vertices) {
-        vertex.position = impl->projection * model * vertex.position; // Apply transform + projection
+        vertex.position = impl->projection * hs::Camera::getViewMatrix() * model * vertex.position; // Apply transform + view + projection
+        
         impl->vertices.push_back(vertex);
     }
 
@@ -189,14 +201,23 @@ void Renderer::Submit(const hs::Sprite& sprite) {
 };
 
 void Renderer::Begin() {
+    impl->frameQuery.Begin();
+    impl->primitiveQuery.Begin();
     impl->textureSlots.clear();
     impl->spriteCount = 0;
     impl->vertices.clear();
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Renderer::End() {
     impl->quadVA.Unbind();
-    impl->defaultShader.Unbind();
+    impl->shader->Unbind();
+    impl->frameQuery.End();
+    impl->primitiveQuery.End();
+    hs::Profiling::Set("Rendering (ms)", impl->frameQuery.GetResult() / 1000000.0 );
+    hs::Profiling::Set("Primitives", impl->primitiveQuery.GetResult() );
+    hs::Profiling::Set("Draw calls", impl->drawCalls);
+    impl->drawCalls = 0;
 }
 
 void Renderer::Flush() {
@@ -204,12 +225,10 @@ void Renderer::Flush() {
     impl->quadVA.Bind();
     impl->quadVB.Bind();
     impl->quadEB.Bind();
-    impl->defaultShader.Bind();
+    impl->shader->Bind();
 
     impl->quadVB.SetData(impl->vertices.data(), impl->vertices.size() * sizeof(SpriteVertex));
     // Note: EBO data is already set in init dumass
-
-    glClear(GL_COLOR_BUFFER_BIT);
 
     for (GLuint i = 0; i < impl->textureSlots.size(); ++i)
     {
@@ -219,10 +238,9 @@ void Renderer::Flush() {
 
     glDrawElements(GL_TRIANGLES, 6 * impl->spriteCount, GL_UNSIGNED_INT, 0);
 
+    impl->drawCalls++;
     
-
     impl->spriteCount = 0;
     impl->vertices.clear();
-
 };
 

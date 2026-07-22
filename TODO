@@ -1,5 +1,6 @@
 Graphics:
- - Make Pimpl for private functions (Shader)
+ - Post-processing
+ - (Later) Render multiple shaders 
 
 Localization:
  - Create localization string
@@ -8,5 +9,6 @@ Localization:
 General:
  - Scene Management (how to load/unload/save or serialize/deserialize)
  - Audio system
+ - ECS
  - Configuration/save file creation
  

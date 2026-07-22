@@ -1,6 +1,6 @@
 #pragma once
 #include <honse/objects/TransformObject.h>
-#include <honse/graphics/Material.h>
+#include <honse/modules/resources/Material.h>
 
 namespace hs {
 
@@ -14,9 +14,12 @@ namespace hs {
         glm::vec2 GetSize() const;
 
         glm::vec4 color = glm::vec4(1.0f);
+        glm::vec2 scale = glm::vec2(1.0f);
 
         Material* material;
 
+        int zIndex = 0;
+        
     private:
 
         glm::vec2 m_Size;

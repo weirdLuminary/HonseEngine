@@ -25,7 +25,7 @@ IndexBuffer::~IndexBuffer() {
 
 void IndexBuffer::SetData(const void* data, unsigned int size) const {
 
-     Bind();
+    Bind();
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
     Unbind();
     
@@ -37,7 +37,7 @@ void IndexBuffer::Bind() const {
 
 }
 
-void IndexBuffer::Unbind() const {
+void IndexBuffer::Unbind() {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 

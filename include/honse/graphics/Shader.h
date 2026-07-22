@@ -79,7 +79,7 @@ namespace hs {
         Shader FromSource(const std::string& vertexSrc, const std::string& fragSrc);    // For custom vertex shader
         Shader FromSource(const std::string& fragSrc);                                  // For default vertex shader
 
-        Shader(const std::string& vertexPath, const std::string& fragmentPath);         // For custom vertex shader
+        Shader(std::string& vertexPath, std::string& fragmentPath);         // For custom vertex shader
         Shader(const std::string& fragmentPath);                                        // For default vertex shader
         Shader();                                                                       // Default implementation for both shaders
         ~Shader();

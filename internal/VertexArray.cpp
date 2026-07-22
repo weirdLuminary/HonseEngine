@@ -12,7 +12,7 @@ void VertexArray::Init() {
 }
 
 void VertexArray::Bind() const { glBindVertexArray(m_RendererID); }
-void VertexArray::Unbind() const { glBindVertexArray(0); }
+void VertexArray::Unbind() { glBindVertexArray(0); }
 
 void VertexArray::AddBuffer(const VertexBuffer& vb, const std::vector<VertexAttribute>& layout) 
 {

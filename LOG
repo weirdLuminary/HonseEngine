@@ -1,10 +1,52 @@
 ... 
-OpenGL wrappers, Object, TransformObject & Sprite, 
+OpenGL wrappers
+
+...
+Basic renderer
+
+...
+Basic engine setup
+
+...
+Object, TransformObject & Sprite, plans to create scenes
 
 
 06.07.26
-Finished basic scene manager; objects can now be added to the scene and rendered via the barebones batch renderer (doesn't currently work)
+
+Slight fixes to OpenGL wrapper classes in order to fit the new renderer.
+
+Finished basic scene manager; objects can now be added to the scene and rendered via the barebones batch renderer (doesn't currently work) with the
+Begin, Flush and End functions. Batch rendering stores sprite vertices on Submit and draws them all at once in Flush when the sprite or texture count overflows or naturally in the loop of the program.
 
 
 07.07.26
 Finished batch renderer (the issue yesterday was sprite opacity and not actually the renderer)
+Made simple camera + sprite scaling
+
+
+08.07.26
+Made simple profiling
+Started resource manager
+
+
+09.07.26 
+Finished resource manager. Planning a custom input handler. (IMPORTANT)
+
+...
+Stopped for a while because I felt bad for some non-specific reason.
+
+
+12.07.26
+Plans to remake file
+
+
+13.07.26
+Remade file to support writing and binary operations, got into how ECS works. 
+
+
+14.07.26
+Felt demotivated so didn't do much. ECS is very confusing and a bit scary to implement. Could possibly make an edition to allow for Unity/Godot-style component systems.
+
+
+15-16.07.26
+Made simple ECS lib (separate for now), still working on it. Should study DOD and SIMD more.

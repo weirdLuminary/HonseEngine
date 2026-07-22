@@ -1,7 +1,7 @@
 #include <honse/graphics/Sprite.h>
 
-hs::Sprite::Sprite(Texture* texture) {
-    material = hs::FromTexture(texture);
+hs::Sprite::Sprite(Material* material) {
+    this->material = material;
 }
 
 glm::vec2 hs::Sprite::GetSize() const {

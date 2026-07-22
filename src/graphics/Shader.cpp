@@ -130,7 +130,7 @@ Shader::Shader() {
 }
 
 
-Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) {
+Shader::Shader(std::string& vertexPath, std::string& fragmentPath) {
 
     m_RendererID = glCreateProgram();
     printf("Created shader program %d!\n", m_RendererID);
