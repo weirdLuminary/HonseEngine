@@ -1,4 +1,4 @@
-#include "EntityManager.h"
+#include <lecs/EntityManager.h>
 #include <iostream>
 #include <cassert>
 
@@ -41,6 +41,8 @@ void EntityManager::SetSignature(Entity& entity, Signature signature)
 
     // Put this entity's signature into the array
     m_Signatures[entity] = signature;
+
+    std::cout << "E > " << signature << '\n';
 }
 
 Signature EntityManager::GetSignature(Entity& entity)

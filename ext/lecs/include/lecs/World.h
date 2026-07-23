@@ -12,6 +12,7 @@ public:
     World();
 
     Entity CreateEntity();
+    Actor CreateActor();
 
     template<typename T>
     void AddComponent(Entity ent, T component)
@@ -49,9 +50,7 @@ public:
         
     }
 
-    void Update() {
-        m_Systems->Update(*this);
-    }
+    void Update();
 
 private:
 

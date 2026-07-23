@@ -10,6 +10,7 @@
 
 #include <honse/graphics/Texture.h>
 #include <honse/graphics/Camera.h>
+#include <honse/graphics/Shader.h>
 #include <honse/modules/profiling/Profiling.h>
 #include <honse/modules/resources/ResourceManager.h>
 
@@ -149,7 +150,7 @@ void Renderer::Shutdown() {
 
 
 
-void Renderer::Submit(const hs::Sprite& sprite) {
+void Renderer::Submit(Resource<Texture> texture, glm::vec2& position, float rotation, glm::vec2& scale, glm::vec4& tint, glm::vec2& pivot) {
 
     if (impl->spriteCount >= impl->MAX_SPRITES ||
     impl->textureSlots.size() >= impl->MAX_TEXTURES)
@@ -159,35 +160,31 @@ void Renderer::Submit(const hs::Sprite& sprite) {
 
     ///// CALCULATE TRANSFORM
 
-    auto& position = sprite.position;
-    auto& pivot = sprite.pivot;
-    auto size = sprite.GetSize();
-    auto scale = sprite.scale;
-    auto& rotation = sprite.rotation;
+    glm::vec2 size = { texture->width, texture->height };
 
     glm::mat4 model(1.0f);
 
-    model = glm::translate(model, glm::vec3(position, sprite.zIndex));
+    model = glm::translate(model, glm::vec3(position, 0.0f));
     model = glm::rotate(model, glm::radians(rotation), glm::vec3(0,0,1));
     model = glm::scale(model, glm::vec3(size * scale, 1.0f));
     model = glm::translate(model, glm::vec3(-pivot, 0.0f));
     
     ///// GENERATE VERTICES
 
-    int slot = impl->GetTextureSlot(sprite.material->texture->GetHandle());
+    int slot = impl->GetTextureSlot(texture->GetHandle());
 
     if (slot == -1)
     {
         Flush();
         impl->textureSlots.clear();
-        slot = impl->GetTextureSlot(sprite.material->texture->GetHandle());
+        slot = impl->GetTextureSlot(texture->GetHandle());
     }
 
     SpriteVertex vertices[] = {  // Position               // Texture coords    // Tex slot and color
-        SpriteVertex { glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), sprite.color, slot  },
-        SpriteVertex { glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), sprite.color, slot  },
-        SpriteVertex { glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f), sprite.color, slot  },
-        SpriteVertex { glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f), sprite.color, slot  }
+        SpriteVertex { glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), tint, slot  },
+        SpriteVertex { glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), tint, slot  },
+        SpriteVertex { glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f), tint, slot  },
+        SpriteVertex { glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f), tint, slot  }
     };
 
     for(SpriteVertex& vertex : vertices) {

@@ -1,7 +1,9 @@
 #pragma once
+#include <honse/modules/resources/Resource.h>
 #include <glm/glm.hpp>
-#include "Sprite.h"
 #include <memory>
+#include "Texture.h"
+
 namespace hs {
 
     class Renderer {
@@ -16,7 +18,7 @@ namespace hs {
         static void Begin();
         static void End();
 
-        static void Submit(const hs::Sprite& sprite);
+        static void Submit(Resource<Texture> texture, glm::vec2& position, float rotation, glm::vec2& scale, glm::vec4& tint, glm::vec2& pivot);
         static void Flush();
 
     private:

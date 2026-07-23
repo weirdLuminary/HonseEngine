@@ -2,6 +2,8 @@
 
 #include "Application.h"
 #include "objects/SceneManager.h"
+#include <lecs/lecs.h>
+#include "graphics/Renderer.h"
 #include "graphics/Camera.h"
 #include "modules/profiling/Profiling.h"
 #include <iostream>
@@ -31,7 +33,7 @@ int main(int argc, char** argv) {
 
         hs::Renderer::Begin();
 
-        hs::SceneManager::Render();
+        hs::SceneManager::Update();
         hs::Renderer::Flush();
 
         hs::Renderer::End();

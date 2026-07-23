@@ -1,5 +1,6 @@
 #include <honse/graphics/Texture.h>
 #include <stb_image.h>
+#include <cassert>
 
 using namespace hs;
 
@@ -36,9 +37,13 @@ Texture::Texture(const std::string& path) : impl(std::make_unique<Impl>())
 
     if(!impl->data) {
         printf("Failed to load texture from \'%s\'!", path.c_str());
+        printf("%s\n", stbi_failure_reason());
         stbi_image_free(impl->data);
         return;
     }
+
+    assert(channels > 0 && "Suspicious channel value");
+    assert(width < 10000 && height < 10000 && "Suspicious size values");
 
     glGenTextures(1, &impl->rendererID);
 

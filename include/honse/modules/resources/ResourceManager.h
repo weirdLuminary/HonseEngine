@@ -1,4 +1,5 @@
 #pragma once
+#include "Resource.h"
 #include <unordered_map>
 #include <memory>
 #include <string>
@@ -11,13 +12,13 @@ namespace hs {
     template<typename T>
     class ResourceCache
     {
-        static std::unordered_map<HashString, std::shared_ptr<T>> Resources;
+        static std::unordered_map<HashString, Resource<T>> Resources;
 
         friend class ResourceManager;
     };
 
     template<typename T>
-    std::unordered_map<HashString, std::shared_ptr<T>> ResourceCache<T>::Resources;
+    std::unordered_map<HashString, Resource<T>> ResourceCache<T>::Resources;
 
 
     class ResourceManager {
@@ -27,7 +28,7 @@ namespace hs {
         ResourceManager() = delete;
 
         template<typename T, typename... Args>
-        static std::shared_ptr<T> Load(const std::string& path, Args&&... args);
+        static Resource<T> Load(const std::string& path, Args&&... args);
 
 
     };

@@ -1,13 +1,15 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
-#include <honse/objects/TransformObject.h>
 
 namespace hs {
 
-    class Camera : public hs::TransformObject {
+    class Camera {
 
     public:
+
+        glm::vec2 position = glm::vec2(0.0f);
+        float rotation = 0.0f;
 
         Camera() = default;
 

@@ -1,21 +1,13 @@
 #include <honse/objects/SceneManager.h>
 #include <honse/objects/Scene.h>
-#include <honse/graphics/Sprite.h>
-#include <honse/graphics/Renderer.h>
+#include <honse/modules/components/Renderable.hpp>
 
 std::vector<std::unique_ptr<hs::Scene>>
     hs::SceneManager::m_ActiveScenes;
 
-void hs::SceneManager::Render() {
-
+void hs::SceneManager::Update() {
     for (std::unique_ptr<Scene>& scene : m_ActiveScenes) {
-
-        for (const std::unique_ptr<Object>& obj : scene->GetEntities()) {
-
-            if (auto* drawable = dynamic_cast<Sprite*>(obj.get())) {
-                Renderer::Submit(*drawable);
-            }
-        }
+        scene->GetWorld().Update();
     }
 }
 

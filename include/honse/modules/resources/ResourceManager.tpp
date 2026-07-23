@@ -5,7 +5,7 @@
 namespace hs {
 
     template<typename T, typename... Args>
-    std::shared_ptr<T> hs::ResourceManager::Load(const std::string& key, Args&&... args)
+    Resource<T> hs::ResourceManager::Load(const std::string& key, Args&&... args)
     {
         auto& resources = ResourceCache<T>::Resources;
 

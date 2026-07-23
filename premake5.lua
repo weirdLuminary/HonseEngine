@@ -95,7 +95,8 @@ project "LECS"
     objdir "bin-int/%{cfg.buildcfg}"
 
     includedirs {
-        "ext/lecs/include"
+        "ext/lecs/include",
+        "ext/lecs/src"
     }
 
     files {
@@ -125,12 +126,13 @@ project "HonseEngine"
 
     includedirs {
         "include",
-        "internal"
+        "internal",
+        "ext/lecs/include"
     }
 
     links {
 		"GLFW",
-        "lecs"
+        "LECS"
 	}
 
     filter "system:windows" 
@@ -158,9 +160,11 @@ project "Pong"
 
     includedirs {
         "include",
+        "ext/lecs/include"
     }
 
     links {
 		"HonseEngine",
+        "LECS",
         "GLFW"
 	}

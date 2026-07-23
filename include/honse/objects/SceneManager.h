@@ -15,7 +15,7 @@ namespace hs
         static Scene& Load(std::unique_ptr<Scene> scene);
         static void Unload(Scene& scene);
 
-        static void Render();
+        static void Update();
 
     private:
 

@@ -9,7 +9,9 @@ namespace hs {
 
     public:
 
-        int width, height, channels;
+        int width = 0;
+        int height = 0;
+        int channels = 0;
 
         Texture();
         Texture(const std::string& path);

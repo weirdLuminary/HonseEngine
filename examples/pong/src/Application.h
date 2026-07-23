@@ -8,7 +8,6 @@ public:
     ~Pong();
 
     void Start();
-    void Update();
 
 };
 

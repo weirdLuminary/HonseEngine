@@ -1,4 +1,5 @@
-#include "World.h"
+#include <lecs/World.h>
+#include <lecs/Actor.h>
 
 World::World() {
     m_Entities = std::make_unique<EntityManager>();
@@ -8,4 +9,12 @@ World::World() {
 
 Entity World::CreateEntity() {
     return m_Entities->CreateEntity();
+}
+
+Actor World::CreateActor() {
+    return Actor(this);
+}
+
+void World::Update() {
+    m_Systems->Update(*this);
 }

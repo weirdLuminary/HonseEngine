@@ -6,8 +6,7 @@ class Actor {
 
 public:
 
-    Actor(World* world);
-    //~Actor();
+    Actor() = delete;
     
     template<typename T>
     void AddComponent(T component) {
@@ -32,9 +31,12 @@ public:
 
 private:
 
+    Actor(World* world);
+
     World* m_World;
     Entity m_ID;
     bool m_Initialized = false;
 
+    friend class World;
 
 };
