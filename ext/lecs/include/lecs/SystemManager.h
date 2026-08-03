@@ -10,7 +10,9 @@ class World;
 class System {
 
 public:
-    virtual void Update(Entity ent, World& world) = 0;
+    virtual ~System() = default;
+    virtual void Init(World& world) = 0;
+    virtual void Update(World& world) = 0;
 
 private:
     std::set<Entity> m_Entities;
@@ -23,7 +25,7 @@ class SystemManager {
 public:
 
     template<typename T, typename... Components>
-    std::shared_ptr<T> RegisterSystem(ComponentManager& cm) {
+    std::shared_ptr<T> RegisterSystem(ComponentManager& cm, World& world) {
         const char* name = typeid(T).name();
 
         auto system = std::make_shared<T>();
@@ -33,6 +35,8 @@ public:
 
 		m_Systems.insert({ name, system });
     	m_Signatures.insert({ name, signature });
+
+        system->Init(world);
 
         return system;
     }

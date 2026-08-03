@@ -1,16 +1,15 @@
 #pragma once
-#include <glad/glad.h>
 #include <string>
 #include <memory>
+#include <glm/glm.hpp>
 
-namespace hs {
+namespace honse {
 
     class Texture {
 
     public:
 
-        int width = 0;
-        int height = 0;
+        glm::vec2 size;
         int channels = 0;
 
         Texture();
@@ -23,9 +22,11 @@ namespace hs {
         Texture(Texture&&) noexcept;
         Texture& operator=(Texture&&) noexcept;
 
+        glm::vec2 GetSize();
+
     private:
 
-        void Bind(GLenum slot) const;
+        void Bind(unsigned int slot) const;
         unsigned int GetHandle();
 
         struct Impl;

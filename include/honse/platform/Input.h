@@ -1,84 +1,208 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "Window.h"
 
-namespace hs {
+namespace honse {
 
-    enum Key {
-        None = 0x00,
-        Overflow = 0x01,
-
-        // MOD KEYS
-
-        LeftControl = 0x01,
-        LeftShift = 0x02,
-        LeftAlt = 0x04,
-        LeftMeta = 0x08,
-        
-        RightControl = 0x10,
-        RightShift = 0x20,
-        RightAlt = 0x40,
-        RightMeta = 0x80,
-
-        // Letters
-
-        A = 0x04,
-        B = 0x05,
-        C = 0x06,
-        D = 0x07,
-        E = 0x08,
-        F = 0x09,
-        G = 0x0a,
-        H = 0x0b,
-        I = 0x0c,
-        J = 0x0d,
-        K = 0x0e,
-        L = 0x0f,
-        M = 0x10,
-        N = 0x11,
-        O = 0x12,
-        P = 0x13,
-        Q = 0x14,
-        R = 0x15,
-        S = 0x16,
-        T = 0x17,
-        U = 0x18,
-        V = 0x19,
-        W = 0x1a,
-        X = 0x1b,
-        Y = 0x1c,
-        Z = 0x1d,
-
-        // Numbers
-
-        One = 0x1e,
-        Two = 0x1f,
-        Three = 0x20,
-        Four = 0x21,
-        Five = 0x22,
-        Six = 0x23,
-        Seven = 0x24,
-        Eight = 0x25,
-        Nine = 0x26,
-        Zero = 0x27,
-
-        // 
-
-        Enter = 0x28,
-        Escape = 0x29,
-        Backspace = 0x2a,
-        Tab = 0x2b,
-        Space = 0x2c,
-        Minus = 0x2d,
-        Equal = 0x2e,
-        LeftBrace = 0x2f,
-        RightBrace = 0x30,
-        Backslash,
-
-    };
 
     class Input
     {
     public:
+
+        enum class Key : uint8_t
+        {
+            None = 0x00,
+            ErrorRollOver = 0x01,
+            POSTFail = 0x02,
+            ErrorUndefined = 0x03,
+
+            // Letters
+            A = 0x04, B, C, D, E, F, G, H, I, J, K, L, M,
+            N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+
+            // Numbers
+            One = 0x1E,
+            Two,
+            Three,
+            Four,
+            Five,
+            Six,
+            Seven,
+            Eight,
+            Nine,
+            Zero,
+
+            // Editing
+            Enter = 0x28,
+            Escape,
+            Backspace,
+            Tab,
+            Space,
+
+            // Symbols
+            Minus,
+            Equal,
+            LeftBrace,
+            RightBrace,
+            Backslash,
+            NonUSHash,
+            Semicolon,
+            Apostrophe,
+            Grave,
+            Comma,
+            Period,
+            Slash,
+
+            // Locks
+            CapsLock,
+
+            // Function keys
+            F1,
+            F2,
+            F3,
+            F4,
+            F5,
+            F6,
+            F7,
+            F8,
+            F9,
+            F10,
+            F11,
+            F12,
+
+            PrintScreen,
+            ScrollLock,
+            Pause,
+
+            Insert,
+            Home,
+            PageUp,
+            Delete,
+            End,
+            PageDown,
+
+            Right,
+            Left,
+            Down,
+            Up,
+
+            NumLock,
+
+            KPDivide,
+            KPMultiply,
+            KPSubtract,
+            KPAdd,
+            KPEnter,
+            KP1,
+            KP2,
+            KP3,
+            KP4,
+            KP5,
+            KP6,
+            KP7,
+            KP8,
+            KP9,
+            KP0,
+            KPDecimal,
+
+            NonUSBackslash,
+            Application,
+            Power,
+            KPEqual,
+
+            // F13-F24
+            F13,
+            F14,
+            F15,
+            F16,
+            F17,
+            F18,
+            F19,
+            F20,
+            F21,
+            F22,
+            F23,
+            F24,
+
+            Execute,
+            Help,
+            Menu,
+            Select,
+            Stop,
+            Again,
+            Undo,
+            Cut,
+            Copy,
+            Paste,
+            Find,
+            Mute,
+            VolumeUp,
+            VolumeDown,
+
+            LockingCapsLock,
+            LockingNumLock,
+            LockingScrollLock,
+
+            KPComma,
+            KPEqualSign,
+
+            International1,
+            International2,
+            International3,
+            International4,
+            International5,
+            International6,
+            International7,
+            International8,
+            International9,
+
+            LANG1,
+            LANG2,
+            LANG3,
+            LANG4,
+            LANG5,
+            LANG6,
+            LANG7,
+            LANG8,
+            LANG9,
+
+            AlternateErase,
+            SysReq,
+            Cancel,
+            Clear,
+            Prior,
+            Return,
+            Separator,
+            Out,
+            Oper,
+            ClearAgain,
+            CrSel,
+            ExSel,
+
+            // HID usages 0xA5-0xDF are reserved
+
+            LeftControl = 0xE0,
+            LeftShift,
+            LeftAlt,
+            LeftMeta,
+            RightControl,
+            RightShift,
+            RightAlt,
+            RightMeta
+        };
+
+        enum KeyModifiers : uint8_t {
+            
+            LeftControl  = 1 << 0,
+            LeftShift    = 1 << 1,
+            LeftAlt      = 1 << 2,
+            LeftMeta     = 1 << 3,
+            RightControl = 1 << 4,
+            RightShift   = 1 << 5,
+            RightAlt     = 1 << 6,
+            RightMeta    = 1 << 7,
+        };
+
         static bool IsKeyDown(Key key);
         static bool IsMouseButtonDown(int button);
 

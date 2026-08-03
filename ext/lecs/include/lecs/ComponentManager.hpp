@@ -68,5 +68,5 @@ private:
 		return std::static_pointer_cast<ComponentArray<T>>(m_ComponentArrays[typeName]);
 	}
 
-
+    friend class World;
 };

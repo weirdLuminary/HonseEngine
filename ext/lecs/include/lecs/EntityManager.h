@@ -25,4 +25,6 @@ private:
 
     uint32_t m_ActiveEntityCount {};
 
+    friend class World;
+
 };

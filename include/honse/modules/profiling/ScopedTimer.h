@@ -2,7 +2,7 @@
 #include <chrono>
 #include <stdio.h>
 
-namespace hs {
+namespace honse {
 
     class ScopedTimer
     {
@@ -10,7 +10,9 @@ namespace hs {
         ScopedTimer(const char* name)
             : m_Name(name)
         {
+            #ifdef DEBUG
             m_Start = std::chrono::high_resolution_clock::now();
+            #endif
         }
 
         ~ScopedTimer();

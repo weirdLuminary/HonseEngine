@@ -1,10 +1,10 @@
 #pragma once
-#include <glad/glad.h>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <string>
 #include <glm/glm.hpp>
 
-namespace hs
+namespace honse
 {
 
 class Window
@@ -16,12 +16,19 @@ public:
     bool ShouldClose() const;
     void Update() const;
 
-    glm::vec2 GetSize();
+    glm::vec2 GetSize() const;
 
-    GLFWwindow* NativeHandle() const;
+    static void BindWindow(Window* window);
+    static const Window* GetCurrentWindow();
+
+    //GLFWwindow* NativeHandle() const;
 
 private:
     GLFWwindow* m_Window = nullptr;
+
+    static Window* m_CurrentWindow;
+
+    friend class Input;
 };
 
 }

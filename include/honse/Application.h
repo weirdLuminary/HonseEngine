@@ -1,7 +1,7 @@
 #pragma once
 #include "platform/Window.h"
 
-namespace hs {
+namespace honse {
 
     class Application {
 
@@ -10,7 +10,6 @@ namespace hs {
         virtual ~Application();
 
         virtual void Start();
-        virtual void Update();
 
     };
 

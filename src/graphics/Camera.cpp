@@ -1,17 +1,30 @@
 #include <honse/graphics/Camera.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <honse/graphics/Renderer.h>
+#include <iostream>
 
-std::unique_ptr<hs::Camera> hs::Camera::m_Main;
+std::unique_ptr<honse::Camera> honse::Camera::m_Main;
 
-hs::Camera* hs::Camera::GetMainCamera() {
+honse::Camera* honse::Camera::GetMainCamera() {
     return m_Main.get();
 }
 
-glm::mat4 hs::Camera::getViewMatrix() {
-    float angle = glm::radians(m_Main->rotation + 90.0f);
-    return glm::lookAt(glm::vec3(m_Main->position, 0.0f), glm::vec3(m_Main->position, 1.0f), { cos(angle), sin(angle), 0.0f });
+glm::vec2 honse::Camera::GetViewportSize() {
+    return m_Main->m_ViewportSize;
 }
 
-void hs::Camera::Init() {
-    m_Main = std::make_unique<hs::Camera>();
+AABB honse::Camera::GetViewport() {
+    return m_Main->m_Viewport;
+}
+
+glm::mat4 honse::Camera::getViewMatrix() {
+    glm::mat4 view(1.0f);
+    view = glm::rotate(view, glm::radians(-m_Main->rotation), {0, 0, 1});
+    view = glm::translate(view, {-m_Main->position.x, -m_Main->position.y, 0.0f});
+
+    return view;
+}
+
+void honse::Camera::Init() {
+    m_Main = std::make_unique<honse::Camera>();
 }

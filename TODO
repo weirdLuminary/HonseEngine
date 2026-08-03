@@ -1,6 +1,7 @@
 Graphics:
  - (Later) Post-processing
  - (Later) Render multiple shaders 
+ - Animated sprites
 
 Localization:
  - Create localization string
@@ -9,6 +10,5 @@ Localization:
 General:
  - Scene Management (how to load/unload/save or serialize/deserialize)
  - Audio system
- - ECS
  - Configuration/save file creation
- 
+ - Event system

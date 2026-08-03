@@ -16,5 +16,6 @@ Actor World::CreateActor() {
 }
 
 void World::Update() {
+    
     m_Systems->Update(*this);
 }

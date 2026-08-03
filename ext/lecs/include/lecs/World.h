@@ -28,7 +28,10 @@ public:
 
     template<typename SystemType, typename... Components>
     void AssignSystem() {
-        m_Systems->RegisterSystem<SystemType, Components...>(*m_Components);
+        m_Systems->RegisterSystem<SystemType, Components...>(*m_Components, *this);
+        for(Entity ent = 0; ent < m_Entities->m_ActiveEntityCount; ent++) {
+            m_Systems->OnSignatureChanged(m_Entities->m_ActiveEntities[ent], m_Entities->GetSignature(ent));
+        }
     }
     
     template<typename T>
@@ -48,6 +51,11 @@ public:
         
         return m_Components->GetComponent<T>(ent);
         
+    }
+
+    template<typename T>
+    std::shared_ptr<ComponentArray<T>> GetComponentArray() {
+        return m_Components->GetComponentArray<T>();
     }
 
     void Update();

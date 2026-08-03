@@ -1,7 +1,7 @@
 #pragma once
 #include "World.h"
 
-// Simple ECS wrapper
+// Abstract representation of the ECS entity ID with functions.
 class Actor {
 
 public:

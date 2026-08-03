@@ -4,10 +4,9 @@
 #include <memory>
 #include <string>
 #include <cstdint>
+#include <honse/modules/Hashing.h>
 
-namespace hs {
-
-    typedef std::uint64_t HashString;
+namespace honse {
 
     template<typename T>
     class ResourceCache

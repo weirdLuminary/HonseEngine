@@ -26,7 +26,7 @@ public:
 
         m_Size++;
 
-        std::cout << "++ Component " << typeid(T).name() << " Ent " << ent << '\n';
+        //std::cout << "++ Component " << typeid(T).name() << " Ent " << ent << '\n';
     };
 
     void Remove(Entity ent) {
@@ -50,7 +50,7 @@ public:
 
         m_Size--;
 
-        std::cout << "-- Component " << typeid(T).name() << " Ent " << ent << " MOVE from " << lastEntity << '\n';
+        //std::cout << "-- Component " << typeid(T).name() << " Ent " << ent << " MOVE from " << lastEntity << '\n';
     }
 
     T& Get(Entity ent) {
@@ -62,8 +62,6 @@ public:
     };
 
 private:
-
-    // Note: unordered maps are faster even though we're aiming for the data to be properly sorted due to the complexity being O(1) compared to map's O(log n)
 
     std::unordered_map<Entity, size_t> m_EntityToIndex;
     std::unordered_map<size_t, Entity> m_IndexToEntity;

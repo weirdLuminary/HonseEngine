@@ -18,7 +18,7 @@ Entity EntityManager::CreateEntity()
     m_AvailableSlots.pop();
     m_ActiveEntityCount++;
 
-    std::cout << "++ Entity " << id << '\n';
+    //std::cout << "++ Entity " << id << '\n';
 
     return id;
 }
@@ -32,17 +32,16 @@ void EntityManager::DestroyEntity(Entity& entity)
     m_AvailableSlots.push(entity);
     m_ActiveEntityCount--;
 
-    std::cout << "-- Entity " << entity << '\n';
+    //std::cout << "-- Entity " << entity << '\n';
 }
 
 void EntityManager::SetSignature(Entity& entity, Signature signature)
 {
     assert(entity < MAX_ENTITIES && "Entity out of range.");
 
-    // Put this entity's signature into the array
     m_Signatures[entity] = signature;
 
-    std::cout << "E > " << signature << '\n';
+    //std::cout << "E > " << signature << '\n';
 }
 
 Signature EntityManager::GetSignature(Entity& entity)

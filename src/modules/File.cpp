@@ -2,13 +2,13 @@
 #include <cstdio>
 
 
-hs::File::File(std::string& path, bool binary) : m_Path(path), m_Binary(binary) {}
+honse::File::File(std::string& path, bool binary) : m_Path(path), m_Binary(binary) {}
 
-void hs::File::Close() {
+void honse::File::Close() {
     if(m_File) fclose(m_File);
 }
 
-void hs::File::Open(const char* args) {
+void honse::File::Open(const char* args) {
 
     if(m_File != NULL) {
         Close();
@@ -22,13 +22,13 @@ void hs::File::Open(const char* args) {
 }
 
 
-hs::File::~File() {
+honse::File::~File() {
 
     Close();
 
 }
 
-std::string hs::File::Read() {
+std::string honse::File::Read() {
 
     Open("r");
 
@@ -45,7 +45,7 @@ std::string hs::File::Read() {
 
 }
 
-void hs::File::Write(std::string value, bool override) {
+void honse::File::Write(std::string value, bool override) {
 
     Open(override ? "w" : "a");
 

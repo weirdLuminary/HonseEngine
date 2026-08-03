@@ -1,6 +1,6 @@
 #include <honse/Engine.h>
 
-class Pong : public hs::Application {
+class Pong : public honse::Application {
 
 public:
 
@@ -11,6 +11,6 @@ public:
 
 };
 
-hs::Application* hs::CreateApplication() {
+honse::Application* honse::CreateApplication() {
     return new Pong();
 }
