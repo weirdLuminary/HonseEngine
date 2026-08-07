@@ -6,13 +6,15 @@
 
 It combines many systems, such as ECS, batch rendering via a manually written OpenGL renderer with object wrappers, audio system based on FMOD, resource manager, and a multithreading system.
 
+**NOTE**: the example project isn't yet made to work. For now it is strictly a sandbox environment.
+
 ## Libraries
 
 Honse Engine uses chunks of code from a few helper libraries, all of which can be found online. 
 
 | Library | Source |
 | --- | --- |
-| LECS | Custom-made; only present in the current project. |
+| LECS (Lame ECS) | Custom-made; only present in the current project. |
 | GLFW | [Official website](https://www.glfw.org/) |
 | GLM | [Github repository](https://github.com/g-truc/glm) |
 | STB (Image utilities) | [Github repository](https://github.com/nothings/stb/) |

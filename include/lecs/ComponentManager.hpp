@@ -36,11 +36,6 @@ public:
     }
 
     template<typename T>
-    T& GetComponent(Entity ent) {
-        return GetComponentArray<T>()->Get(ent);
-    }
-
-    template<typename T>
     void AddComponent(Entity ent, T component) {
         GetComponentArray<T>()->Add(ent, component);
     }
@@ -69,4 +64,7 @@ private:
 	}
 
     friend class World;
+
+    template<typename...>
+    friend class View;
 };

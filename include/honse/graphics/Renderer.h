@@ -6,6 +6,8 @@
 
 namespace honse {
 
+    extern float deltaTime;
+
     class Renderer {
 
     public:

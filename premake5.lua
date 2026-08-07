@@ -92,7 +92,6 @@ project "LECS"
     objdir "bin-int/%{cfg.buildcfg}"
 
     includedirs {
-        "ext/lecs/include",
         "ext/lecs/src",
         "include",
     }

@@ -3,7 +3,7 @@
 
 honse::Scene::Scene() {
     m_World = World();
-    m_World.AssignSystem<honse::RenderableHandler, honse::Renderable, honse::Transform>();
+    m_World.RegisterSystem<RenderableHandler>();
 }
 
 World& honse::Scene::GetWorld() {

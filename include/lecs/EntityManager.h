@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include <queue>
 #include <array>
+#include <vector>
 #include <cstdint>
 
 class EntityManager {
@@ -18,7 +19,7 @@ public:
 
 private:
 
-    std::array<Entity, MAX_ENTITIES> m_ActiveEntities;
+    std::vector<Entity> m_ActiveEntities;
     std::array<Signature, MAX_ENTITIES> m_Signatures;
 
     std::queue<Entity> m_AvailableSlots; 
@@ -27,4 +28,6 @@ private:
 
     friend class World;
 
+    template<typename...>
+    friend class View;
 };

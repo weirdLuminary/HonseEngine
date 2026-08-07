@@ -10,7 +10,7 @@ std::vector<std::unique_ptr<honse::Scene>>
 void honse::SceneManager::Update() {
     ScopedTimer timer("ECS update time");
     for (std::unique_ptr<Scene>& scene : m_ActiveScenes) {
-            scene->GetWorld().Update();
+        scene->GetWorld().Update();
     }
 }
 

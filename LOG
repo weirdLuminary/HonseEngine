@@ -78,7 +78,7 @@ Tried to make the thing work on Windows but failed. Reorganized a bit more. Got 
 
 
 29.07.26
-Added threading to optimize more. Not like I need to but like hey.
+Added threading to optimize more. Not like I need maximum performance, but I find it to be pretty effective in the end.
 
 NOTE: Mutex is used in threading to prevent thread racing.
 
@@ -89,3 +89,11 @@ Added culling and AABB for additional optimization.
 
 02.08.26
 Got a bit into how FMOD works. Planning to finish the audio system and optimize the ECS more by adding a View class.
+
+
+XX.08.26
+Separated git branches into dev and master respectively.
+
+
+06-07.08.26
+Finished LECS views; the ECS update times are slightly better now. Notably, a lot of things have been slightly remade in order to fit the view class. LECS Systems are now also independent from signatures, which implies that they don't need to be assigned to a signature in order to work, allowing for systems not to affect any entities at all.

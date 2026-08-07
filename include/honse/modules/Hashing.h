@@ -16,7 +16,7 @@ namespace honse {
         return hash;
     }
 
-    constexpr uint64_t operator""ID(const char* s) {
+    constexpr uint64_t operator""_ID(const char* s) {
         return hash(s);
     }
 

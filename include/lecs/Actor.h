@@ -22,11 +22,6 @@ public:
         m_World->RemoveComponent<T>(m_ID);
     };
 
-    template<typename T>
-    T& GetComponent() { 
-        return m_World->GetComponent<T>(m_ID);
-    };
-
     Entity GetInternalID() { return m_ID; }
 
 private:

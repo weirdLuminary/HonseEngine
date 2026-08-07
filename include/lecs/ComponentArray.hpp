@@ -1,7 +1,7 @@
 #pragma once
 #include "Entity.h"
-#include <unordered_map>
 #include <iostream>
+#include <array>
 
 class IComponentArray {
 
@@ -19,8 +19,8 @@ public:
 
     void Add(Entity ent, T component) {
 
-        m_EntityToIndex.insert({ ent, m_Size });
-        m_IndexToEntity.insert({ m_Size, ent });
+        m_EntityToIndex[ent] = m_Size;
+        m_IndexToEntity[m_Size] = ent;
 
         m_Components[m_Size] = component;
 
@@ -45,8 +45,8 @@ public:
 
         // Remove extra index
 
-        m_EntityToIndex.erase(ent);
-        m_IndexToEntity.erase(lastIndex);;
+        m_EntityToIndex[ent] = 0;
+        m_IndexToEntity[lastIndex] = 0;
 
         m_Size--;
 
@@ -57,14 +57,29 @@ public:
         return m_Components[m_EntityToIndex[ent]];
     }
 
+    T& Get(size_t index)
+    {
+        return m_Components[index];
+    }
+
+    Entity GetEntity(size_t index) const
+    {
+        return m_IndexToEntity[index];
+    }
+
+    size_t Size() const
+    {
+        return m_Size;
+    }
+
     void EntityDestroyed(Entity entity) override {
         Remove(entity);
     };
 
 private:
 
-    std::unordered_map<Entity, size_t> m_EntityToIndex;
-    std::unordered_map<size_t, Entity> m_IndexToEntity;
+    std::array<size_t, MAX_ENTITIES> m_EntityToIndex;
+    std::array<Entity, MAX_ENTITIES> m_IndexToEntity;
 
     std::array<T, MAX_ENTITIES> m_Components;
 

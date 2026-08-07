@@ -22,16 +22,20 @@ namespace honse {
 
         void Update(World& world) override {
             
-            auto& transform = world.GetComponent<Transform>(e);
-            auto& renderable = world.GetComponent<Renderable>(e);
+            auto view = world.GetView<Renderable, Transform>();
 
-            glm::vec2& texSize = renderable.texture->size;
-            float rotationRad = glm::radians(transform.rotation);
+            for(auto [ent, renderable, transform] : view) {
 
-            AABB box = getRotatedAABB(transform.position, texSize, transform.pivot, rotationRad);
-            
-            if(isColliding(box, honse::Camera::GetViewport())) { 
-                honse::Renderer::Submit(renderable.texture, transform.position, rotationRad, transform.scale, renderable.tint, transform.pivot);
+                // std::cout << "Entity: " << ent << "\n";
+
+                glm::vec2& texSize = renderable.texture->size;
+                float rotationRad = glm::radians(transform.rotation);
+
+                AABB box = getRotatedAABB(transform.position, texSize, transform.pivot, rotationRad);
+                
+                if(isColliding(box, honse::Camera::GetViewport())) { 
+                    honse::Renderer::Submit(renderable.texture, transform.position, rotationRad, transform.scale, renderable.tint, transform.pivot);
+                }
             }
         }
     };

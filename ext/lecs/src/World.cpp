@@ -2,13 +2,15 @@
 #include <lecs/Actor.h>
 
 World::World() {
-    m_Entities = std::make_unique<EntityManager>();
-    m_Components = std::make_unique<ComponentManager>();
-    m_Systems = std::make_unique<SystemManager>();
+    m_Registry = {
+        std::make_shared<EntityManager>(), 
+        std::make_shared<ComponentManager>(),
+        std::make_shared<SystemManager>()
+    };
 }
 
 Entity World::CreateEntity() {
-    return m_Entities->CreateEntity();
+    return m_Registry.entities->CreateEntity();
 }
 
 Actor World::CreateActor() {
@@ -16,6 +18,5 @@ Actor World::CreateActor() {
 }
 
 void World::Update() {
-    
-    m_Systems->Update(*this);
+    m_Registry.systems->Update(*this);
 }
