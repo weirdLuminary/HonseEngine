@@ -1,22 +1,27 @@
 #include <honse/platform/Input.h>
-#include <GLFW/glfw3.h>
+#include <iostream>
+#include "glfwbackend/Input.hpp"
+#include <honse/modules/Math.hpp>
 
-bool hs::Input::IsKeyDown(Key key) {
+bool honse::Input::IsKeyDown(Key key) {
 
-    return glfwGetKey(glfwGetCurrentContext(), key) == GLFW_PRESS;
+    return glfwGetKey(honse::Window::GetCurrentWindow()->m_Window, toGLFW(key)) == GLFW_PRESS;
 
 } 
 
-bool hs::Input::IsMouseButtonDown(int button) {
+bool honse::Input::IsMouseButtonDown(int button) {
 
-    return glfwGetMouseButton(glfwGetCurrentContext(), button) == GLFW_PRESS;
+    return glfwGetMouseButton(honse::Window::GetCurrentWindow()->m_Window, button) == GLFW_PRESS;
 
 }
 
-glm::vec2 hs::Input::GetMousePosition() {
+// Returns the position of the mouse cursor in world coordinates.
+glm::vec2 honse::Input::GetMousePosition() {
 
     double x, y;
-    glfwGetCursorPos(glfwGetCurrentContext(), &x, &y);
-    return { x, y };
+    
+    glfwGetCursorPos(honse::Window::GetCurrentWindow()->m_Window, &x, &y);
+
+    return honse::Math::toWorldPosition({ x, y });
 
 }

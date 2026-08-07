@@ -6,46 +6,58 @@
 #include "graphics/Renderer.h"
 #include "graphics/Camera.h"
 #include "modules/profiling/Profiling.h"
+#include "platform/Input.h"
+#include "audio/Audio.h"
 #include <iostream>
+#include <honse/modules/Threading.h>
 
-extern hs::Application* hs::CreateApplication();
+extern honse::Application* honse::CreateApplication();
 
 // Platform-agnostic entry point wrapper
 int main(int argc, char** argv) {
     std::cout << "Engine Bootstrapping..." << std::endl;
 
     #ifdef DEBUG
-    std::cout << "!!! Debugging enabled !!!" << std::endl;
+    #pragma message("!!! Debugging enabled !!!")
     #endif
-    
-    auto app = hs::CreateApplication();
 
-    hs::Window* window = new hs::Window(640, 640, "test"); 
-    hs::Camera::Init();  
-    hs::Renderer::Init(); 
+    #ifdef NDEBUG
+    #pragma message("Release version")
+    #endif
+
+    honse::Threading::Init();
+    
+    auto app = honse::CreateApplication();
+
+    honse::Window* window = new honse::Window(640, 640, "test"); 
+    honse::Window::BindWindow(window);
+
+    honse::Audio::Init();
+    honse::Camera::Init();  
+    honse::Renderer::Init(); 
     
     app->Start();
 
     if(window == nullptr) return -1;
 
     while(!window->ShouldClose()) {
-        app->Update();
 
-        hs::Renderer::Begin();
+        honse::Renderer::Begin();
 
-        hs::SceneManager::Update();
-        hs::Renderer::Flush();
+        honse::SceneManager::Update();
 
-        hs::Renderer::End();
+        honse::Renderer::End();
 
         window->Update();
 
         #ifdef DEBUG
-        //hs::Profiling::FlushData();
+        honse::Profiling::FlushData();
         #endif
     }
 
-    hs::Renderer::Shutdown(); 
+    honse::Renderer::Shutdown(); 
+    honse::Audio::Shutdown();
+    honse::Threading::Shutdown();
     
     delete app;
     return 0;

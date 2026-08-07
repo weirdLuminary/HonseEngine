@@ -1,7 +1,7 @@
 #include <honse/graphics/Texture.h>
 #include <honse/graphics/Shader.h>
 
-namespace hs {
+namespace honse {
 
     class Material
     {

@@ -1,5 +1,6 @@
 workspace "HonseEngine"
    	configurations { "Debug", "Release" }
+    architecture "x86_64"
 
     filter "configurations:Debug"
         defines { "DEBUG" }
@@ -12,49 +13,39 @@ workspace "HonseEngine"
     filter {}
 
 --------------------------------------------------------------------------------
--- GLFW (STATIC, X11 ONLY)
+-- GLFW (STATIC, X11 ONLY) + GLAD
 --------------------------------------------------------------------------------
 project "GLFW"
     kind "StaticLib"
     language "C"
+    pic "On"
 
     targetdir "bin/%{cfg.buildcfg}"
     objdir "bin-int/%{cfg.buildcfg}"
 
-    defines {
-        "_GLFW_X11"
-    }
-
     includedirs {
         "ext/glfw-3.4/include",
-        "ext/glfw-3.4/src"
+        "ext/glfw-3.4/src",
+        "ext/glad/include"
     }
 
     files {
-		"ext/glfw-3.4/src/context.c",
-		"ext/glfw-3.4/src/init.c",
-		"ext/glfw-3.4/src/input.c",
-		"ext/glfw-3.4/src/monitor.c",
-		"ext/glfw-3.4/src/platform.c",
-		"ext/glfw-3.4/src/window.c",
-		"ext/glfw-3.4/src/vulkan.c",
-		"ext/glfw-3.4/src/null_*.c",
-
-        -- X11 backend
-        "ext/glfw-3.4/src/x11_*.c",
-		"ext/glfw-3.4/src/glx_context.c",
-		"ext/glfw-3.4/src/xkb_unicode.c",
-
-		-- REQUIRED context backends
-		"ext/glfw-3.4/src/egl_context.c",
-		"ext/glfw-3.4/src/osmesa_context.c",
-
-		-- POSIX helpers
-		"ext/glfw-3.4/src/linux_joystick.c",
-		"ext/glfw-3.4/src/posix_*.c"
-	}
+        "ext/glfw-3.4/src/context.c",
+        "ext/glfw-3.4/src/init.c",
+        "ext/glfw-3.4/src/input.c",
+        "ext/glfw-3.4/src/monitor.c",
+        "ext/glfw-3.4/src/platform.c",
+        "ext/glfw-3.4/src/window.c",
+        "ext/glfw-3.4/src/vulkan.c",
+        "ext/glfw-3.4/src/null_*.c",
+        "ext/glad/glad.c"
+    }
 
     filter "system:linux"
+        defines {
+            "_GLFW_X11"
+        }
+
         links {
 			"GL",
             "X11",
@@ -67,22 +58,27 @@ project "GLFW"
             "m"
         }
 
+
+        files {
+            "ext/glfw-3.4/src/x11_*.c",
+            "ext/glfw-3.4/src/glx_context.c",
+            "ext/glfw-3.4/src/xkb_unicode.c",
+            "ext/glfw-3.4/src/egl_context.c",
+            "ext/glfw-3.4/src/osmesa_context.c",
+            "ext/glfw-3.4/src/linux_joystick.c",
+            "ext/glfw-3.4/src/posix_*.c"
+        }
+
 		removefiles {
 			"ext/glfw-3.4/src/wl_*.c",
 			"ext/glfw-3.4/src/win32_*.c",
 			"ext/glfw-3.4/src/cocoa_*.c",
     	}
 
-    filter "system:windows"
-        links {
-            "GLFW",
-            "opengl32",
-            "gdi32",
-            "user32",
-            "shell32"
-        }
+    
 
     filter {}
+
 
 --------------------------------------------------------------------------------
 -- LECS
@@ -90,13 +86,14 @@ project "GLFW"
 project "LECS"
     kind "StaticLib"
     language "C++"
+    pic "On"
 
     targetdir "bin/%{cfg.buildcfg}"
     objdir "bin-int/%{cfg.buildcfg}"
 
     includedirs {
-        "ext/lecs/include",
-        "ext/lecs/src"
+        "ext/lecs/src",
+        "include",
     }
 
     files {
@@ -108,12 +105,14 @@ project "LECS"
 
 
 --------------------------------------------------------------------------------
--- ENGINE
+-- ENGINE + FMOD
 --------------------------------------------------------------------------------
 project "HonseEngine"
-	kind "StaticLib"
+    kind "SharedLib"
     language "C++"
     cppdialect "C++17"
+    pic "On"
+
     targetdir "bin/%{cfg.buildcfg}"
     objdir "bin-int/%{cfg.buildcfg}"
 
@@ -121,27 +120,46 @@ project "HonseEngine"
         "internal/**.cpp",
         "src/**.h",
         "src/**.cpp",
-		"ext/glad.c"
     }
 
     includedirs {
         "include",
         "internal",
-        "ext/lecs/include"
+        "ext/lecs/include",
+        "ext/fmod/include",
+        "ext/glad/include",
+        "ext/fmod/include/fmod/core",
+        "ext/fmod/include/fmod/studio",
+        "ext/glfw-3.4/include"
     }
 
     links {
-		"GLFW",
-        "LECS"
-	}
-
-    filter "system:windows" 
-        defines { "_WIN" }
+        "GLFW",
+        "LECS"     
+    }
 
     filter "system:linux"
-        defines { "_LINUX" } 
+        defines { "_LINUX" }
 
-    
+        libdirs {
+            "ext/fmod/lib/core/x86_64",
+            "ext/fmod/lib/studio/x86_64"
+        }
+
+        links {
+            "fmodstudio",
+            "fmod"
+        }
+
+        postbuildcommands {
+            "{COPY} ext/fmod/lib/core/x86_64/*.so* %{cfg.targetdir}",
+            "{COPY} ext/fmod/lib/studio/x86_64/*.so* %{cfg.targetdir}"
+        }
+
+        linkoptions {
+            "-Wl,--no-undefined,-rpath,\\$$ORIGIN"
+        }
+
     filter {}
 
 --------------------------------------------------------------------------------
@@ -164,7 +182,5 @@ project "Pong"
     }
 
     links {
-		"HonseEngine",
-        "LECS",
-        "GLFW"
-	}
+        "HonseEngine"
+    }

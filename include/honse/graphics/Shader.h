@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace hs {
+namespace honse {
     
 
 
@@ -33,27 +33,50 @@ namespace hs {
         unsigned int fragmentShader = 0;
 
         const char* defaultVertexSrc = R"(#version 330 core
-            layout(location = 0) in vec4 a_Position;
-            layout(location = 1) in vec2 a_TexCoord;
-            layout(location = 3) in int  a_TextureID;
-            layout(location = 2) in vec4 a_Color;
+            layout(location = 0) in vec2 a_Position;
+            layout(location = 1) in vec2 a_UV;
+
+            layout(location = 2) in vec4 a_Tint;
+            layout(location = 3) in vec2 a_PositionInstance;
+            layout(location = 4) in float a_Rotation;
+            layout(location = 5) in vec2 a_Scale;
+            layout(location = 6) in vec2 a_Pivot;
+            layout(location = 7) in vec2 a_Size;
+            layout(location = 8) in int a_TextureSlot;
+
+            uniform mat4 u_ViewProjection;
 
             out vec2 v_TexCoord;
-            flat out int v_TextureID;
             out vec4 v_Color;
+            flat out int v_TextureSlot;
 
             void main()
             {
-                gl_Position = a_Position;
-                v_TexCoord = a_TexCoord;
-                v_TextureID = a_TextureID;
-                v_Color = a_Color;
+                vec2 p = a_Position - a_Pivot;
+
+                p *= a_Scale * a_Size;
+
+                float c = cos(a_Rotation);
+                float s = sin(a_Rotation);
+
+                p = vec2(
+                    c * p.x - s * p.y,
+                    s * p.x + c * p.y
+                );
+
+                p += a_PositionInstance;
+
+                gl_Position = u_ViewProjection * vec4(p, 0.0, 1.0);
+
+                v_TexCoord = a_UV;
+                v_Color = a_Tint;
+                v_TextureSlot = a_TextureSlot;
             }
             )";
 
         const char* defaultFragmentSrc = R"(#version 330 core
             in vec2 v_TexCoord;
-            flat in int v_TextureID;
+            flat in int v_TextureSlot;
             in vec4 v_Color;
 
             out vec4 FragColor;
@@ -62,7 +85,7 @@ namespace hs {
 
             void main()
             {
-                FragColor = texture(u_Textures[v_TextureID], v_TexCoord) * v_Color;
+                FragColor = texture(u_Textures[v_TextureSlot], v_TexCoord) * v_Color;
             }
             )";
 

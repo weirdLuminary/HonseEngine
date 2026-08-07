@@ -4,7 +4,9 @@
 #include <memory>
 #include "Texture.h"
 
-namespace hs {
+namespace honse {
+
+    extern float deltaTime;
 
     class Renderer {
 
@@ -21,11 +23,12 @@ namespace hs {
         static void Submit(Resource<Texture> texture, glm::vec2& position, float rotation, glm::vec2& scale, glm::vec4& tint, glm::vec2& pivot);
         static void Flush();
 
+        static void OnResolutionChange(glm::vec2 resolution);
+
     private:
 
         struct Impl;
         static std::unique_ptr<Impl> impl;
-
 
     };
 

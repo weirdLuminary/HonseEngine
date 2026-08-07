@@ -2,8 +2,9 @@
 #include <cstdint>
 #include <variant>
 #include <unordered_map>
+#include "ScopedTimer.h"
 
-namespace hs {
+namespace honse {
 
     using ProfileValue = std::variant<int, int64_t, float, double>;
     

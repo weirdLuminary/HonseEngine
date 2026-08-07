@@ -1,28 +1,41 @@
 #include <honse/platform/Window.h>
+#include <honse/graphics/Renderer.h>
 #include <iostream>
+#include <glad/glad.h>
+
+honse::Window* honse::Window::m_CurrentWindow = nullptr;
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+    honse::Renderer::OnResolutionChange({ width, height });
 }
 
-hs::Window::Window(int w, int h, const char* title) {
+void honse::Window::BindWindow(Window* window) {
+    m_CurrentWindow = window;
+}
+
+const honse::Window* honse::Window::GetCurrentWindow() {
+    return m_CurrentWindow;
+}
+
+honse::Window::Window(int w, int h, const char* title) {
 
     if (!glfwInit())
     {
-        std::cout << "glfwInit failed\n";
+        std::cout << "GLFW initialization failure!\n";
         return;
     }
-    std::cout << "glfwInit succeeded\n";
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwSwapInterval(1); // Enable VSync
 
     m_Window = glfwCreateWindow(w, h, title, NULL, NULL);
     if (!m_Window)
     {
-        printf("Window init fail!");
+        printf("Window initialization fail!");
         return;
     }
     glfwMakeContextCurrent(m_Window);
@@ -30,31 +43,28 @@ hs::Window::Window(int w, int h, const char* title) {
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        printf("GLAD init fail!");
+        printf("GLAD initialization fail!");
         return;
     }    
-    std::cout << "Window created\n";
 }
 
-void hs::Window::Update() const {
+void honse::Window::Update() const {
     glfwSwapBuffers(m_Window);
     glfwPollEvents();
 }
 
-bool hs::Window::ShouldClose() const { return glfwWindowShouldClose(m_Window); }
+bool honse::Window::ShouldClose() const { return glfwWindowShouldClose(m_Window); }
 
-GLFWwindow* hs::Window::NativeHandle() const { return m_Window; }
+glm::vec2 honse::Window::GetSize() const { 
+    int width;
+    int height;
 
-glm::vec2 hs::Window::GetSize() { 
-    int* width;
-    int* height;
+    glfwGetFramebufferSize(m_Window, &width, &height);
 
-    glfwGetWindowSize(m_Window, width, height);
-
-    return glm::vec2(*width, *height);
+    return glm::vec2(width, height);
 };
 
-hs::Window::~Window() {
+honse::Window::~Window() {
 
     glfwDestroyWindow(m_Window);
     glfwTerminate();

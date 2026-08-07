@@ -1,11 +1,11 @@
 #include <honse/objects/Scene.h>
 #include <honse/modules/components/Renderable.hpp>
 
-hs::Scene::Scene() {
+honse::Scene::Scene() {
     m_World = World();
-    m_World.AssignSystem<hs::RenderableHandler, hs::Renderable, hs::Transform>();
+    m_World.RegisterSystem<RenderableHandler>();
 }
 
-World& hs::Scene::GetWorld() {
+World& honse::Scene::GetWorld() {
     return m_World;
 }

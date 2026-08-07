@@ -1,8 +1,9 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
+#include <honse/modules/utilities/AABB.h>
 
-namespace hs {
+namespace honse {
 
     class Camera {
 
@@ -13,6 +14,9 @@ namespace hs {
 
         Camera() = default;
 
+        static glm::vec2 GetViewportSize();
+        static AABB GetViewport();
+
         static Camera* GetMainCamera();
         
         static void Init();
@@ -21,6 +25,9 @@ namespace hs {
 
         static glm::mat4 getViewMatrix();
         static std::unique_ptr<Camera> m_Main;
+
+        glm::vec2 m_ViewportSize;
+        AABB m_Viewport;
 
         friend class Renderer;
 

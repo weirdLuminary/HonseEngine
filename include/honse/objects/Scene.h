@@ -2,7 +2,7 @@
 #include <memory>
 #include <lecs/lecs.h>
 
-namespace hs
+namespace honse
 {
     
     class Scene {

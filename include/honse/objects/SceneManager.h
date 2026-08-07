@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 
-namespace hs
+namespace honse
 {
 
     class SceneManager {
@@ -13,6 +13,10 @@ namespace hs
         static const std::vector<std::unique_ptr<Scene>>& GetScenes(); 
 
         static Scene& Load(std::unique_ptr<Scene> scene);
+        static Scene& Load(std::string& path);
+
+        static Scene& CreateScene();
+
         static void Unload(Scene& scene);
 
         static void Update();

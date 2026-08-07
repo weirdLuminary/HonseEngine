@@ -2,7 +2,7 @@
 #include <honse/modules/File.h>
 #include <glad/glad.h>
 
-using namespace hs;
+using namespace honse;
 
 ///// UNIFORM /////
 

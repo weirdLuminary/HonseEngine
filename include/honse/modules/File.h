@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string>
 
-namespace hs {
+namespace honse {
 
     class File {
 

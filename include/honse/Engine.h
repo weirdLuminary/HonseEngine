@@ -6,3 +6,6 @@
 #include "platform/Input.h"
 #include "modules/resources/ResourceManager.h"
 #include "EntryPoint.h"
+
+using namespace glm;
+#define hs honse

@@ -1,11 +1,10 @@
 #pragma once
 #include <iostream>
-#include "Hashing.h"
 
-namespace hs {
+namespace honse {
 
     template<typename T, typename... Args>
-    Resource<T> hs::ResourceManager::Load(const std::string& key, Args&&... args)
+    Resource<T> honse::ResourceManager::Load(const std::string& key, Args&&... args)
     {
         auto& resources = ResourceCache<T>::Resources;
 

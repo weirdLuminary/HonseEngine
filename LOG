@@ -32,16 +32,18 @@ Started resource manager
 09.07.26 
 Finished resource manager. Planning a custom input handler. (IMPORTANT)
 
-...
-Stopped for a while because I felt bad for some non-specific reason.
+
+10.07.26
+Had a headache and a bit of mental issues so didn't do much; played Katana Zero and completed it. Been fun but my eyes are red
 
 
 12.07.26
-Plans to remake file
+Plans to remake File
 
 
 13.07.26
-Remade file to support writing and binary operations, got into how ECS works. 
+Remade File to support writing and binary operations, got into how ECS works. 
+Discovered Box2D, got distracted by playing around.
 
 
 14.07.26
@@ -50,3 +52,48 @@ Felt demotivated so didn't do much. ECS is very confusing and a bit scary to imp
 
 15-16.07.26
 Made simple ECS lib (separate for now), still working on it. Should study DOD and SIMD more.
+
+
+23.07.26
+ECS lib fully implemented, everything works. Worth noting old TransformObject & such files were removed and fully remade.
+
+
+24.07.26 
+Performance issues discovered at high drawable count (10k), will investigate.
+
+Optimized via calculating transformations on the GPU, instanced drawing + texture lookup map. VAOs now have a vertex rate parameter.
+Created instance VBO separate from the quad VBO which remains static now, as well as the quad EBO.
+
+NOTE: glDrawElementsInstanced is the main function to draw instances without making the buffer any bigger. It instead essentially acts as a for loop for glDrawElements which allows for static buffers.
+
+
+27.07.26
+Made a keymap list for input so that the end user doesn't have access to GLFW keys. Input kinda works
+Reorganized a bit, placed GLAD into externals and fixed the respective include errors. Should probably make a PImpl for Window too. 
+Added FMOD but didn't implement any wrappers yet.
+
+
+28.07.26
+Tried to make the thing work on Windows but failed. Reorganized a bit more. Got 1984 lines of code in total right now.
+
+
+29.07.26
+Added threading to optimize more. Not like I need maximum performance, but I find it to be pretty effective in the end.
+
+NOTE: Mutex is used in threading to prevent thread racing.
+
+
+30.07.26
+Added culling and AABB for additional optimization.
+
+
+02.08.26
+Got a bit into how FMOD works. Planning to finish the audio system and optimize the ECS more by adding a View class.
+
+
+XX.08.26
+Separated git branches into dev and master respectively.
+
+
+06-07.08.26
+Finished LECS views; the ECS update times are slightly better now. Notably, a lot of things have been slightly remade in order to fit the view class. LECS Systems are now also independent from signatures, which implies that they don't need to be assigned to a signature in order to work, allowing for systems not to affect any entities at all.

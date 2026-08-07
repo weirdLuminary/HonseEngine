@@ -1,12 +1,11 @@
 #include <honse/Application.h>
 
-namespace hs {
+namespace honse {
 
     Application::Application() = default;
 
     Application::~Application() = default;
 
     void Application::Start() {};
-    void Application::Update() {};
 
 }
