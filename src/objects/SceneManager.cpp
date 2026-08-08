@@ -14,6 +14,10 @@ void honse::SceneManager::Update() {
     }
 }
 
+void honse::SceneManager::Shutdown() {
+    m_ActiveScenes.clear();
+}
+
 honse::Scene& honse::SceneManager::Load(std::unique_ptr<Scene> scene) {
     Scene& ref = *scene;
     m_ActiveScenes.push_back(std::move(scene));

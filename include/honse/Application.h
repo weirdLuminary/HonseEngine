@@ -9,7 +9,7 @@ namespace honse {
         Application();
         virtual ~Application();
 
-        virtual void Start();
+        virtual void Main();
 
     };
 

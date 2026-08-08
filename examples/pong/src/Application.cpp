@@ -13,7 +13,8 @@ public:
     void Init(World& world) override {}
 
     void Update(World& world) override {
-        const float speed = 500.0f;
+        static float speed = 500.0f;
+        const float acceleration = 500.0f;
 
         glm::vec2 velocity { 0.0f, 0.0f };
 
@@ -22,8 +23,13 @@ public:
         if(hs::Input::IsKeyDown(hs::Input::Key::S)) velocity.y -= 1.0f;
         if(hs::Input::IsKeyDown(hs::Input::Key::D)) velocity.x += 1.0f;
 
-        if (glm::length(velocity) <= 0.0f) return;
+        if (glm::length(velocity) <= 0.0f) {
+            speed = 500.0f;
+            return;
+        }
+        speed += acceleration * hs::deltaTime * 0.5f;
         hs::Camera::GetMainCamera()->position += glm::normalize(velocity) * hs::deltaTime * speed;
+        speed += acceleration * hs::deltaTime * 0.5f;
     }
 };
 
@@ -42,7 +48,7 @@ public:
     }
 };
 
-void Pong::Start() {
+void Pong::Main() {
 
     Resource<hs::Texture> tex = hs::ResourceManager::Load<hs::Texture>("john", "res/johnthepain.png");
 

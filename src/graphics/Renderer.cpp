@@ -52,8 +52,6 @@ struct Renderer::Impl {
 
     std::vector<SpriteInstance> instances; // Per-sprite settings
 
-    std::chrono::time_point<std::chrono::high_resolution_clock> lastFrameStart;
-
     std::unordered_map<GLuint, int> textureSlotMap;
     std::vector<GLuint> textureSlots;
 
@@ -214,8 +212,6 @@ void Renderer::Submit(Resource<Texture> texture, glm::vec2& position, float rota
 
 void Renderer::Begin() {
 
-    impl->lastFrameStart = std::chrono::high_resolution_clock::now();
-
     impl->view = honse::Camera::getViewMatrix(); // Get camera view
 
     honse::Camera::m_Main->m_Viewport = {
@@ -260,12 +256,6 @@ void Renderer::End() {
     honse::Profiling::Set("Draw calls", impl->drawCalls);
 
     impl->drawCalls = 0;
-
-    auto end = std::chrono::high_resolution_clock::now();
-
-    deltaTime = std::chrono::duration<float>(end - impl->lastFrameStart).count();
-
-    honse::Profiling::Set("ΔT (seconds)", deltaTime);
 }
 
 void Renderer::Flush() {
