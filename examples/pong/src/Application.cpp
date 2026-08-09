@@ -2,6 +2,9 @@
 #include <honse/modules/components/Renderable.hpp>
 #include <honse/modules/Math.hpp>
 #include <algorithm> 
+#include <honse/modules/Time.h>
+#include <honse/audio/Bank.h>
+#include <honse/audio/Audio.h>
 
 Pong::Pong() {}
 Pong::~Pong() {}
@@ -14,7 +17,6 @@ public:
 
     void Update(World& world) override {
         static float speed = 500.0f;
-        const float acceleration = 500.0f;
 
         glm::vec2 velocity { 0.0f, 0.0f };
 
@@ -23,13 +25,8 @@ public:
         if(hs::Input::IsKeyDown(hs::Input::Key::S)) velocity.y -= 1.0f;
         if(hs::Input::IsKeyDown(hs::Input::Key::D)) velocity.x += 1.0f;
 
-        if (glm::length(velocity) <= 0.0f) {
-            speed = 500.0f;
-            return;
-        }
-        speed += acceleration * hs::deltaTime * 0.5f;
-        hs::Camera::GetMainCamera()->position += glm::normalize(velocity) * hs::deltaTime * speed;
-        speed += acceleration * hs::deltaTime * 0.5f;
+        if (glm::length(velocity) <= 0.0f) return;
+        hs::Camera::GetMainCamera()->position += glm::normalize(velocity) * hs::Time::GetDeltaTime() * speed;
     }
 };
 
@@ -53,6 +50,8 @@ void Pong::Main() {
     Resource<hs::Texture> tex = hs::ResourceManager::Load<hs::Texture>("john", "res/johnthepain.png");
 
     auto& scene = hs::SceneManager::CreateScene();
+
+    Resource<hs::Bank> bank = hs::Audio::LoadBank("master", "res/Master.bank");
 
     scene.GetWorld().RegisterSystem<CameraMovement>();
     scene.GetWorld().RegisterSystem<RotationSystem>();

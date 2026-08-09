@@ -9,8 +9,6 @@ private:
 
 public:
 
-    void Init(const GLuint data[], unsigned int count);
-
     IndexBuffer(const GLuint data[], unsigned int count);
     IndexBuffer() = default;
     ~IndexBuffer();

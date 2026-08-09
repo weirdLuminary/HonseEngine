@@ -21,7 +21,6 @@
 using namespace honse;
 
 
-float honse::deltaTime = 0.0f;
 std::unique_ptr<honse::Renderer::Impl> honse::Renderer::impl;
 
 void GLAPIENTRY GLDebugCallback(
@@ -63,10 +62,11 @@ struct Renderer::Impl {
 
     void initRenderData() {
 
-        printf("%s\n", glGetString(GL_VERSION));
+        printf("%s\n\n", glGetString(GL_VERSION));
         // glEnable(GL_DEBUG_OUTPUT);
         // glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glEnable(GL_BLEND);
+        glEnable(GL_MULTISAMPLE);  
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 
         glDebugMessageCallback(GLDebugCallback, nullptr);
@@ -99,13 +99,13 @@ struct Renderer::Impl {
         shader->Bind();
         shader->FindUniform("u_Textures").Set(samplers, 16);
 
-        quadVA.Init();
+        quadVA = VertexArray();
         quadVA.Bind();
 
-        quadVB.Init(quad, sizeof(quad));
-        quadEB.Init(indices, sizeof(indices));
+        quadVB = VertexBuffer(quad, sizeof(quad));
+        quadEB = IndexBuffer(indices, sizeof(indices));
 
-        instanceVB.Init(nullptr, MAX_SPRITES * sizeof(SpriteInstance));
+        instanceVB = VertexBuffer(nullptr, MAX_SPRITES * sizeof(SpriteInstance));
         instanceVB.Bind();
 
         quadVB.Bind();

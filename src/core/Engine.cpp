@@ -17,11 +17,6 @@ void honse::Engine::CreateWindow() {
     if(m_Window == nullptr) Shutdown(-1);
 
     honse::Window::BindWindow(m_Window);
-
-    std::cout
-    << "Window thread: "
-    << std::this_thread::get_id()
-    << '\n';
 }
 
 void honse::Engine::Init(Application* app)
@@ -32,6 +27,7 @@ void honse::Engine::Init(Application* app)
     #pragma message("!!! Debugging enabled !!!")
     #endif
 
+    honse::Window::Initialize();
     CreateWindow();
     honse::Threading::Init();
     honse::Audio::Init();
@@ -48,11 +44,13 @@ void honse::Engine::Run()
 
         honse::Time::StartFrame();
 
+        m_Window->PollEvents();
+
         honse::Renderer::Begin();
         honse::SceneManager::Update();
         honse::Renderer::End();
 
-        m_Window->Update();
+        m_Window->SwapBuffers();
 
         #ifdef DEBUG
         honse::Profiling::FlushData();

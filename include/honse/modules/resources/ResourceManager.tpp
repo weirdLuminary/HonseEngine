@@ -6,13 +6,21 @@ namespace honse {
     template<typename T, typename... Args>
     Resource<T> ResourceManager::Load(const std::string& key, Args&&... args)
     {
-        auto& cache = GetCache<T>();
-
-        auto hashKey = hash(key);
-
-        return cache.Load(
-            hashKey,
+        printf("Trying to load \'%s\'...\n", key.c_str());
+        return GetCache<T>().Load(
+            hash(key),
             std::forward<Args>(args)...
+        );
+    }
+
+
+    template<typename T, typename Factory>
+    Resource<T> ResourceManager::Construct(const std::string& key, Factory&& factory)
+    {
+        printf("Trying to construct \'%s\'...\n", key.c_str());
+        return GetCache<T>().Construct(
+            hash(key),
+            std::forward<Factory>(factory)
         );
     }
 

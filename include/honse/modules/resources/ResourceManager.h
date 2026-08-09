@@ -20,7 +20,8 @@ namespace honse {
     class ResourceCache : public IResourceCache
     {
     public:
-        Resource<T> Load(HashString hashKey, auto&&... args)
+        template<typename... Args>
+        Resource<T> Load(HashString hashKey, Args... args)
         {
             auto it = m_Resources.find(hashKey);
 
@@ -28,10 +29,29 @@ namespace honse {
                 return it->second;
 
             auto resource = std::make_shared<T>(
-                std::forward<decltype(args)>(args)...
+                std::forward<Args>(args)...
             );
 
             m_Resources.emplace(hashKey, resource);
+
+            printf("Type %s loaded with ID %i\n", typeid(T).name(), hashKey);
+
+            return resource;
+        }
+
+        template<typename Factory>
+        Resource<T> Construct(HashString hashKey, Factory&& factory)
+        {
+            auto it = m_Resources.find(hashKey);
+
+            if (it != m_Resources.end())
+                return it->second;
+
+            auto resource = factory();
+
+            m_Resources.emplace(hashKey, resource);
+
+            printf("Type %s loaded via construction with ID %i\n", typeid(T).name(), hashKey);
 
             return resource;
         }
@@ -56,6 +76,9 @@ namespace honse {
 
         template<typename T, typename... Args>
         static Resource<T> Load(const std::string& key, Args&&... args);
+
+        template<typename T, typename Factory>
+        static Resource<T> Construct(const std::string& key, Factory&& factory);
 
     private:
 

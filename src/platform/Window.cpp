@@ -21,17 +21,6 @@ const honse::Window* honse::Window::GetCurrentWindow() {
 
 honse::Window::Window(int w, int h, const char* title) {
 
-    if (!glfwInit())
-    {
-        std::cout << "GLFW initialization failure!\n";
-        return;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwSwapInterval(1); // Enable VSync
-
     m_Window = glfwCreateWindow(w, h, title, NULL, NULL);
     if (!m_Window)
     {
@@ -48,9 +37,26 @@ honse::Window::Window(int w, int h, const char* title) {
     }    
 }
 
-void honse::Window::Update() const {
-    glfwSwapBuffers(m_Window);
+void honse::Window::Initialize() {
+    if (!glfwInit())
+    {
+        std::cout << "GLFW initialization failure!\n";
+        return;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwSwapInterval(1); // Enable VSync
+    glfwWindowHint(GLFW_SAMPLES, 4);
+}
+
+void honse::Window::PollEvents() const {
     glfwPollEvents();
+}
+
+void honse::Window::SwapBuffers() const {
+    glfwSwapBuffers(m_Window);
 }
 
 bool honse::Window::ShouldClose() const { return glfwWindowShouldClose(m_Window); }

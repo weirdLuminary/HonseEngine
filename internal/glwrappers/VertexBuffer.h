@@ -5,14 +5,12 @@ class VertexBuffer {
 
 private:
 
-    GLuint m_RendererID;
+    GLuint m_RendererID = 0;
 
 public:
 
-    void Init(const void* data, unsigned int size);
-
-    VertexBuffer() : m_RendererID(0) {}
-    VertexBuffer(const void* data, unsigned int size);
+    VertexBuffer() = default;
+    VertexBuffer(const void* data, unsigned int size, GLenum type = GL_STATIC_DRAW);
     ~VertexBuffer();
 
     void Bind() const;

@@ -13,8 +13,11 @@ public:
     Window(int width, int height, const char* title);
     ~Window();
 
+    static void Initialize();
+
     bool ShouldClose() const;
-    void Update() const;
+    void SwapBuffers() const;
+    void PollEvents() const;
 
     glm::vec2 GetSize() const;
 
