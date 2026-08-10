@@ -24,7 +24,7 @@ namespace honse {
 
         bool m_Binary;
         std::string m_Path;
-        FILE* m_File;
+        FILE* m_File = nullptr;
 
     };
 

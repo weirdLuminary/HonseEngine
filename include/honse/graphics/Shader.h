@@ -32,6 +32,20 @@ namespace honse {
         unsigned int vertexShader = 0;
         unsigned int fragmentShader = 0;
 
+        bool postProcessing = false;
+
+        const char* basicVertexSrc = R"(#version 330 core
+            layout (location = 0) in vec2 a_Pos;
+            layout (location = 1) in vec2 a_TexCoords;
+
+            out vec2 TexCoords;
+
+            void main()
+            {
+                gl_Position = vec4(a_Pos.x, a_Pos.y, 0.0, 1.0); 
+                TexCoords = a_TexCoords;
+            })";
+
         const char* defaultVertexSrc = R"(#version 330 core
             layout(location = 0) in vec2 a_Position;
             layout(location = 1) in vec2 a_UV;
@@ -89,8 +103,11 @@ namespace honse {
             }
             )";
 
-        static unsigned int Compile(const std::string& path, int type);
+        static unsigned int Compile(const std::string& source, int type);
         static bool CheckCompileStatus(unsigned int shader);
+        static bool CheckLinkingStatus(unsigned int program);
+
+        void AttachShaders();
 
         void Bind() const;
         void Unbind() const;
@@ -99,12 +116,9 @@ namespace honse {
 
     public:
 
-        Shader FromSource(const std::string& vertexSrc, const std::string& fragSrc);    // For custom vertex shader
-        Shader FromSource(const std::string& fragSrc);                                  // For default vertex shader
-
-        Shader(std::string& vertexPath, std::string& fragmentPath);         // For custom vertex shader
-        Shader(const std::string& fragmentPath);                                        // For default vertex shader
-        Shader();                                                                       // Default implementation for both shaders
+        Shader(std::string vertexPath, std::string fragmentPath);                   // For custom vertex shader
+        Shader(std::string fragmentPath, bool postProcessing = false);              // For default vertex shader/post-processing shader
+        Shader();                                                                   // Default implementation for both shaders
         ~Shader();
 
         Uniform FindUniform(const std::string& name);

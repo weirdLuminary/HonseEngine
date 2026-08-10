@@ -40,7 +40,7 @@ void Uniform::Set(const glm::mat4& value) {
 
 ///// SHADER /////
 
-bool Shader::CheckCompileStatus(GLuint shader) {
+bool Shader::CheckCompileStatus(unsigned int shader) {
     int compileStatus;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
     if(compileStatus != GL_TRUE) {
@@ -61,6 +61,18 @@ bool Shader::CheckCompileStatus(GLuint shader) {
     return true;
 }
 
+bool Shader::CheckLinkingStatus(unsigned int program) {
+    GLint success;
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+        char log[1024];
+        glGetProgramInfoLog(program, 1024, nullptr, log);
+        printf("Shader link failed:\n%s\n", log);
+    }
+    return success;
+}
+
 
 unsigned int Shader::Compile(const std::string& source, int type) {
 
@@ -79,32 +91,31 @@ unsigned int Shader::Compile(const std::string& source, int type) {
     return id;
 }
 
-Shader::Shader(const std::string& fragmentPath) {
-
-    m_RendererID = glCreateProgram();
-    printf("Created shader program %d!\n", m_RendererID);
-
-    vertexShader = Compile(defaultVertexSrc, GL_VERTEX_SHADER);
-    fragmentShader = Compile(fragmentPath, GL_FRAGMENT_SHADER);
-
+void Shader::AttachShaders() {
     glAttachShader(m_RendererID, vertexShader);
     glAttachShader(m_RendererID, fragmentShader);
     glLinkProgram(m_RendererID);
 
-    GLint success;
-    glGetProgramiv(m_RendererID, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        char log[1024];
-        glGetProgramInfoLog(m_RendererID, 1024, nullptr, log);
-        printf("Shader link failed:\n%s\n", log);
-    }
+    CheckLinkingStatus(m_RendererID);
 
     glDetachShader(m_RendererID, vertexShader);
     glDetachShader(m_RendererID, fragmentShader);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+}
+
+Shader::Shader(std::string fragmentPath, bool postProcessing) : postProcessing(postProcessing) {
+
+    m_RendererID = glCreateProgram();
+    printf("Created shader program %d!\n", m_RendererID);
+
+    File fragFile(fragmentPath);
+    
+    vertexShader = Compile(postProcessing ? basicVertexSrc : defaultVertexSrc, GL_VERTEX_SHADER);
+    fragmentShader = Compile(fragFile.Read(), GL_FRAGMENT_SHADER);
+
+    AttachShaders();
 
 }
 
@@ -117,20 +128,12 @@ Shader::Shader() {
     vertexShader = Compile(defaultVertexSrc, GL_VERTEX_SHADER);
     fragmentShader = Compile(defaultFragmentSrc, GL_FRAGMENT_SHADER);
 
-    glAttachShader(m_RendererID, vertexShader);
-    glAttachShader(m_RendererID, fragmentShader);
-    glLinkProgram(m_RendererID);
-
-    glDetachShader(m_RendererID, vertexShader);
-    glDetachShader(m_RendererID, fragmentShader);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    AttachShaders();
 
 }
 
 
-Shader::Shader(std::string& vertexPath, std::string& fragmentPath) {
+Shader::Shader(std::string vertexPath, std::string fragmentPath) {
 
     m_RendererID = glCreateProgram();
     printf("Created shader program %d!\n", m_RendererID);
@@ -141,15 +144,7 @@ Shader::Shader(std::string& vertexPath, std::string& fragmentPath) {
     vertexShader = Compile(vertFile.Read(), GL_VERTEX_SHADER);
     fragmentShader = Compile(fragFile.Read(), GL_FRAGMENT_SHADER);
 
-    glAttachShader(m_RendererID, vertexShader);
-    glAttachShader(m_RendererID, fragmentShader);
-    glLinkProgram(m_RendererID);
-
-    glDetachShader(m_RendererID, vertexShader);
-    glDetachShader(m_RendererID, fragmentShader);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    AttachShaders();
 
 }
 

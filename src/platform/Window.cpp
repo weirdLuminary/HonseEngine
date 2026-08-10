@@ -7,7 +7,6 @@ honse::Window* honse::Window::m_CurrentWindow = nullptr;
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    glViewport(0, 0, width, height);
     honse::Renderer::OnResolutionChange({ width, height });
 }
 

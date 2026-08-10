@@ -22,8 +22,6 @@ namespace honse {
         Texture(Texture&&) noexcept;
         Texture& operator=(Texture&&) noexcept;
 
-        glm::vec2 GetSize();
-
     private:
 
         void Bind(unsigned int slot) const;
