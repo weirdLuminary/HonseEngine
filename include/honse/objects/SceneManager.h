@@ -20,6 +20,7 @@ namespace honse
         static void Unload(Scene& scene);
 
         static void Update();
+        static void Shutdown();
 
     private:
 

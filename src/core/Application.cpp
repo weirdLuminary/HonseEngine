@@ -6,6 +6,6 @@ namespace honse {
 
     Application::~Application() = default;
 
-    void Application::Start() {};
+    void Application::Main() {};
 
 }

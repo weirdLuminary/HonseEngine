@@ -25,8 +25,6 @@ Honse Engine uses chunks of code from a few helper libraries, all of which can b
 ## TODO
 
 **Graphics:**
- - (Later) Post-processing
- - (Later) Render multiple shaders 
  - Animated sprites
 
 **Localization:**
@@ -36,5 +34,4 @@ Honse Engine uses chunks of code from a few helper libraries, all of which can b
 **General:**
  - Scene Management (how to load/unload/save or serialize/deserialize)
  - Audio system
- - Configuration/save file creation
  - Event system

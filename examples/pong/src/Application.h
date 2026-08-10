@@ -1,4 +1,4 @@
-#include <honse/Engine.h>
+#include <honse/honse.h>
 
 class Pong : public honse::Application {
 
@@ -7,7 +7,7 @@ public:
     Pong();
     ~Pong();
 
-    void Start();
+    void Main();
 
 };
 

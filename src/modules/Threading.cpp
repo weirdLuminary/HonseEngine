@@ -11,15 +11,18 @@ unsigned int honse::Threading::m_ActiveThreads;
 
 
 void honse::Threading::Init() {
-    m_Threads.reserve(8);
+    const uint8_t workers = 8;
 
-    for(int i = 0; i < 8; i++) {
+    m_Threads.reserve(workers);
+
+    for(int i = 0; i < workers; i++) {
         m_Threads.emplace_back(
             std::thread([]() {
                 RunPool();
             }
         ));
     }
+    printf("Created %i worker threads\n", workers);
 }
 
 void honse::Threading::Wait() {
@@ -50,7 +53,6 @@ void honse::Threading::Enqueue(std::function<void()> func) {
 
 void honse::Threading::RunPool() {
 
-    std::cout << "Worker started\n";
     while(true) {
 
         std::function<void()> func;

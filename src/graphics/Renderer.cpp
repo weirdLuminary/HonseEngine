@@ -8,12 +8,15 @@
 #include "glwrappers/SpriteInstance.h"
 #include "glwrappers/QuadVertex.h"
 #include "glwrappers/Query.h"
+#include "glwrappers/FrameBuffer.h"
+#include "glwrappers/RenderBuffer.h"
 
 #include <honse/graphics/Texture.h>
 #include <honse/graphics/Camera.h>
 #include <honse/graphics/Shader.h>
 #include <honse/modules/profiling/Profiling.h>
 #include <honse/modules/resources/ResourceManager.h>
+#include <honse/Engine.h>
 
 #include <iostream>
 #include <chrono>
@@ -21,7 +24,6 @@
 using namespace honse;
 
 
-float honse::deltaTime = 0.0f;
 std::unique_ptr<honse::Renderer::Impl> honse::Renderer::impl;
 
 void GLAPIENTRY GLDebugCallback(
@@ -38,42 +40,52 @@ void GLAPIENTRY GLDebugCallback(
 
 struct Renderer::Impl {
 
-    VertexArray quadVA;
-    VertexBuffer quadVB;
-    VertexBuffer instanceVB;
-    IndexBuffer quadEB;
+    Query frameQuery;                                   // Query for profiling rendering time
+    Query primitiveQuery;                               // Query for profiling primitives drawn
+    unsigned int drawCalls = 0;                         // Draw calls this frame
 
-    glm::mat4 projection;
-    glm::mat4 view;
+    VertexBuffer quadVB;                                // Base quad VBO        
+    IndexBuffer quadEB;                                 // Base quad EBO
 
-    Query frameQuery;
-    Query primitiveQuery;
-    unsigned int drawCalls;
+    ////////////////        Main rendering      ////////////////                    
 
-    std::vector<SpriteInstance> instances; // Per-sprite settings
+    VertexArray quadVA;                                 // Batch renderer VAO
+    VertexBuffer instanceVB;                            // Batch renderer instance VBO
 
-    std::chrono::time_point<std::chrono::high_resolution_clock> lastFrameStart;
+    glm::mat4 projection;                               //  Projection & View matrices
+    glm::mat4 view;                                     //  respectively
+    
+    std::vector<SpriteInstance> instances;              // Per-sprite settings
 
-    std::unordered_map<GLuint, int> textureSlotMap;
-    std::vector<GLuint> textureSlots;
+    std::unordered_map<GLuint, int> textureSlotMap;     // Lookup map for texture slots
+    std::vector<GLuint> textureSlots;                   // Actual texture slot list
 
-    std::shared_ptr<Shader> shader;
+    Resource<Shader> shader;                            // Shader for batch rendering
 
-    unsigned int spriteCount = 0;
-    const size_t MAX_SPRITES = 10000;
-    GLint MAX_TEXTURES = 16;
+    unsigned int spriteCount = 0;                       // Sprite count this frame
+    const size_t MAX_SPRITES = 10000;                   // Max amount of sprites per frame
+    GLint MAX_TEXTURES = 16;                            // Max amount of loaded textures before Flush is called
+
+    ////////////////        Post-processing     ////////////////
+
+    VertexArray postProcVA;                             // Post-processing VAO
+
+	VertexBuffer postProcQuadVB;
+	FrameBuffer frameBuffer;
+	RenderBuffer renderBuffer;
+
+    Resource<Shader> postProcShader;                    // Post-processing shader (will be user-defined)
 
     void initRenderData() {
 
-        printf("%s\n", glGetString(GL_VERSION));
-        // glEnable(GL_DEBUG_OUTPUT);
-        // glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        printf("%s\n\n", glGetString(GL_VERSION));
         glEnable(GL_BLEND);
+        glEnable(GL_MULTISAMPLE);  
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 
         glDebugMessageCallback(GLDebugCallback, nullptr);
 
-        //glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &MAX_TEXTURES);
+        //////////////      Batch renderer      //////////////
 
         QuadVertex quad[] = {
             {{0.0f, 0.0f}, {0.0f, 0.0f}},
@@ -82,42 +94,42 @@ struct Renderer::Impl {
             {{1.0f, 1.0f}, {1.0f, 1.0f}}
         };
 
-        instances.reserve(MAX_SPRITES);
+		QuadVertex postProcQuad[] = {
+			{{-1.0f, -1.0f}, {0.0f, 0.0f}},
+			{{ 1.0f, -1.0f}, {1.0f, 0.0f}},
+			{{-1.0f,  1.0f}, {0.0f, 1.0f}},
+			{{ 1.0f,  1.0f}, {1.0f, 1.0f}}
+		};
 
-        unsigned int indices[] =
-        {
-            0, 1, 2,
-            2, 1, 3
-        };
+        unsigned int indices[] = {0, 1, 2, 2, 1, 3};
 
-        projection = glm::ortho(800.0f, -800.0f, -800.0f, 800.0f);
+        projection = glm::ortho(800.0f, -800.0f, -800.0f, 800.0f); // Create default projection; temporary
 
         int samplers[16];
 
         for (int i = 0; i < 16; i++)
             samplers[i] = i;
 
-        shader = honse::ResourceManager::Load<honse::Shader>("basic");
+        shader = honse::ResourceManager::Load<honse::Shader>("default");
         shader->Bind();
         shader->FindUniform("u_Textures").Set(samplers, 16);
 
-        quadVA.Init();
+        quadVA = VertexArray();
         quadVA.Bind();
 
-        quadVB.Init(quad, sizeof(quad));
-        quadEB.Init(indices, sizeof(indices));
+        quadVB = VertexBuffer(quad, sizeof(quad));
+        quadEB = IndexBuffer(indices, sizeof(indices));
 
-        instanceVB.Init(nullptr, MAX_SPRITES * sizeof(SpriteInstance));
+        instanceVB = VertexBuffer(nullptr, MAX_SPRITES * sizeof(SpriteInstance));
         instanceVB.Bind();
 
         quadVB.Bind();
         quadEB.Bind();
-
         quadVA.Bind();
 
         quadVA.AddBuffer(quadVB, {
-            { 0, 2, GL_FLOAT },
-            { 1, 2, GL_FLOAT }
+            { 0, 2, GL_FLOAT }, // Individual position
+            { 1, 2, GL_FLOAT }  // UV
         });
         
         quadVA.AddBuffer(instanceVB, {
@@ -129,6 +141,39 @@ struct Renderer::Impl {
             { 7, 2, GL_FLOAT }, // Texture size
             { 8, 1, GL_INT   }  // Texture slot ID
         }, VertexRate::Instance);
+
+        instances.reserve(MAX_SPRITES);
+
+        //////////////     Post-processing     //////////////
+
+        postProcVA.Bind();
+
+		postProcQuadVB = VertexBuffer(postProcQuad, sizeof(postProcQuad));
+
+		frameBuffer.Bind();
+		frameBuffer.AttachTexture(800, 800);
+
+		renderBuffer = RenderBuffer(800, 800);
+		renderBuffer.Bind();
+		renderBuffer.AttachFramebuffer();
+
+		if(!frameBuffer.CheckComplete())
+			printf("Framebuffer incomplete!\n");
+
+		renderBuffer.Unbind();
+
+		frameBuffer.Unbind();
+
+        postProcShader = honse::ResourceManager::Load<honse::Shader>("postProcess", "res/postProcessingTest.glsl", true);
+        postProcVA.AddBuffer(postProcQuadVB, {
+            { 0, 2, GL_FLOAT }, // Individual position
+            { 1, 2, GL_FLOAT }  // UV
+        });
+
+		postProcVA.Unbind();
+		postProcShader->Unbind();
+
+        //////////////         Profiling       //////////////
 
         frameQuery = Query(GL_TIME_ELAPSED);
         primitiveQuery = Query(GL_PRIMITIVES_GENERATED);
@@ -159,7 +204,18 @@ struct Renderer::Impl {
 /////////////////////////////////////////////
 
 void Renderer::OnResolutionChange(glm::vec2 resolution) {
-    impl->projection = glm::ortho(0.0f, resolution.x, 0.0f, resolution.y);
+	auto& w = resolution.x;
+	auto& h = resolution.y;
+
+    impl->projection = glm::ortho(0.0f, w, 0.0f, h);
+
+	impl->frameBuffer.ResizeTexture(w, h);
+
+	impl->renderBuffer.Bind();
+	glViewport(0, 0, w, h);
+	impl->renderBuffer.Resize(w, h);
+	impl->renderBuffer.Unbind();
+
     honse::Camera::GetMainCamera()->m_ViewportSize = resolution;
 }
 
@@ -214,8 +270,6 @@ void Renderer::Submit(Resource<Texture> texture, glm::vec2& position, float rota
 
 void Renderer::Begin() {
 
-    impl->lastFrameStart = std::chrono::high_resolution_clock::now();
-
     impl->view = honse::Camera::getViewMatrix(); // Get camera view
 
     honse::Camera::m_Main->m_Viewport = {
@@ -247,8 +301,8 @@ void Renderer::Begin() {
 void Renderer::End() {
     Flush();
 
-    impl->quadVA.Unbind();
-    impl->shader->Unbind();
+    impl->postProcVA.Unbind();
+    impl->postProcShader->Unbind();
 
     // End profiling timers
     impl->frameQuery.End();
@@ -260,15 +314,11 @@ void Renderer::End() {
     honse::Profiling::Set("Draw calls", impl->drawCalls);
 
     impl->drawCalls = 0;
-
-    auto end = std::chrono::high_resolution_clock::now();
-
-    deltaTime = std::chrono::duration<float>(end - impl->lastFrameStart).count();
-
-    honse::Profiling::Set("ΔT (seconds)", deltaTime);
 }
 
 void Renderer::Flush() {
+
+	impl->frameBuffer.Bind();
 
     impl->quadVA.Bind();
     impl->quadVB.Bind();
@@ -285,11 +335,23 @@ void Renderer::Flush() {
         glBindTexture(GL_TEXTURE_2D, impl->textureSlots[i]);
     }
 
+	glClear(GL_COLOR_BUFFER_BIT);
+
     glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, impl->spriteCount);
 
-    impl->drawCalls++;
-    
+	FrameBuffer::Unbind();
+
     impl->spriteCount = 0;
     impl->instances.clear();
+
+	impl->postProcShader->Bind();
+	impl->postProcVA.Bind();
+	impl->postProcQuadVB.Bind();
+	impl->quadEB.Bind();
+	glBindTexture(GL_TEXTURE_2D, impl->frameBuffer.GetTexture());
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+    impl->drawCalls++;
 };
 

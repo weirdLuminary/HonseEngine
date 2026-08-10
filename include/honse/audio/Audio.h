@@ -1,8 +1,11 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <honse/modules/resources/ResourceManager.h>
 
 namespace honse {
+
+    class Bank;
 
     class Audio {
 
@@ -15,12 +18,14 @@ namespace honse {
 
         static void Update();
 
-        static void LoadBank(std::string& id, std::string& path);
+        static Resource<honse::Bank> LoadBank(const std::string& id, const std::string& path);
 
     private:
 
         struct Impl;
         static std::unique_ptr<Impl> impl;
+
+        friend class Bank;
 
     };
 

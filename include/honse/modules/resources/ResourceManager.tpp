@@ -4,22 +4,40 @@
 namespace honse {
 
     template<typename T, typename... Args>
-    Resource<T> honse::ResourceManager::Load(const std::string& key, Args&&... args)
+    Resource<T> ResourceManager::Load(const std::string& key, Args&&... args)
     {
-        auto& resources = ResourceCache<T>::Resources;
-
-        auto hashKey = hash(key); 
-        auto it = resources.find(hashKey);
-
-        if (it != ResourceCache<T>::Resources.end())
-            return it->second;
-
-        auto object = std::make_shared<T>(args...);
-        ResourceCache<T>::Resources[hashKey] = object;
-
-        std::cout << "Loading " << typeid(T).name() << " \'" << key << "' (" <<  hashKey << ")" << '\n';
-
-        return object;
+        printf("Trying to load \'%s\'...\n", key.c_str());
+        return GetCache<T>().Load(
+            hash(key),
+            std::forward<Args>(args)...
+        );
     }
+
+
+    template<typename T, typename Factory>
+    Resource<T> ResourceManager::Construct(const std::string& key, Factory&& factory)
+    {
+        printf("Trying to construct \'%s\'...\n", key.c_str());
+        return GetCache<T>().Construct(
+            hash(key),
+            std::forward<Factory>(factory)
+        );
+    }
+
+    template<typename T>
+    ResourceCache<T>& ResourceManager::GetCache()
+    {
+        static ResourceCache<T> cache;
+
+        static bool registered = []()
+        {
+            m_Caches.push_back(&cache);
+            return true;
+        }();
+
+        (void)registered;
+
+        return cache;
+    };
 
 }

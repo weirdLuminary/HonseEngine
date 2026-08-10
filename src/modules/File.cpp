@@ -5,7 +5,11 @@
 honse::File::File(std::string& path, bool binary) : m_Path(path), m_Binary(binary) {}
 
 void honse::File::Close() {
-    if(m_File) fclose(m_File);
+    if (m_File != nullptr)
+    {
+        fclose(m_File);
+        m_File = nullptr;
+    }
 }
 
 void honse::File::Open(const char* args) {

@@ -1,21 +1,12 @@
 #include "VertexBuffer.h"
 #include <stdio.h>
 
-VertexBuffer::VertexBuffer(const void* data, unsigned int size) 
+VertexBuffer::VertexBuffer(const void* data, unsigned int size, GLenum type) 
 {
     glGenBuffers(1, &m_RendererID);
     glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-    glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size, data, type);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    printf("Created buffer %d!\n", m_RendererID);
-}
-
-void VertexBuffer::Init(const void* data, unsigned int size) {
-    glGenBuffers(1, &m_RendererID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-    glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    printf("Created buffer %d!\n", m_RendererID);
 }
 
 VertexBuffer::~VertexBuffer()

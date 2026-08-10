@@ -1,14 +1,12 @@
 #include "VertexArray.h"
 
 VertexArray::VertexArray() {
-
     glGenVertexArrays(1, &m_RendererID);
-
 }
 
-void VertexArray::Init() {
-    
-    glGenVertexArrays(1, &m_RendererID);
+VertexArray::~VertexArray() {
+    if (m_RendererID != 0)
+        glDeleteVertexArrays(1, &m_RendererID);  
 }
 
 void VertexArray::Bind() const { glBindVertexArray(m_RendererID); }

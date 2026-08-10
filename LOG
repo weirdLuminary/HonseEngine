@@ -12,7 +12,6 @@ Object, TransformObject & Sprite, plans to create scenes
 
 
 06.07.26
-
 Slight fixes to OpenGL wrapper classes in order to fit the new renderer.
 
 Finished basic scene manager; objects can now be added to the scene and rendered via the barebones batch renderer (doesn't currently work) with the
@@ -97,3 +96,16 @@ Separated git branches into dev and master respectively.
 
 06-07.08.26
 Finished LECS views; the ECS update times are slightly better now. Notably, a lot of things have been slightly remade in order to fit the view class. LECS Systems are now also independent from signatures, which implies that they don't need to be assigned to a signature in order to work, allowing for systems not to affect any entities at all.
+
+
+07-08.08.26
+Reorganized & restructured the engine a bit, modified resource management to be neater. Added deltaTime.
+
+
+09.08.26
+Added FMOD bank & bank loading; added MSAA (only for main framebuffer for now); made code slightly neater.
+Will aim to expand the audio system to work properly; plans to add animated sprites, sprites with custom shaders & post-processing.
+
+
+10.08.26 
+Post-processing is finished. Fixed potential segfault in File.cpp. Insignificant changes to design for some things.

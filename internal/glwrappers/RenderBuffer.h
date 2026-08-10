@@ -1,33 +1,37 @@
 #pragma once
 #include <glad/glad.h>
 
-class VertexBuffer {
+class RenderBuffer {
 
 private:
 
-    GLuint m_RendererID = 0;
+    GLuint m_RendererID;
+
 
 public:
 
-    VertexBuffer() = default;
-    VertexBuffer(const void* data, unsigned int size, GLenum type = GL_STATIC_DRAW);
-    ~VertexBuffer();
+    RenderBuffer() = default;
+    RenderBuffer(int width, int height);
+    ~RenderBuffer();
+
+    void AttachFramebuffer() const;
+    void Resize(int width, int height) const;
 
     void Bind() const;
     static void Unbind();
-    void SetData(const void* data, unsigned int size) const;
 
     // Remove copying
-    VertexBuffer(const VertexBuffer&) = delete;
-    VertexBuffer& operator=(const VertexBuffer&) = delete;
+    
+    RenderBuffer(const RenderBuffer&) = delete;
+    RenderBuffer& operator=(const RenderBuffer&) = delete;
 
-    VertexBuffer(VertexBuffer&& other) noexcept
+    RenderBuffer(RenderBuffer&& other) noexcept
     : m_RendererID(other.m_RendererID)
     {
         other.m_RendererID = 0;
     }
 
-    VertexBuffer& operator=(VertexBuffer&& other) noexcept
+    RenderBuffer& operator=(RenderBuffer&& other) noexcept
     {
         if (this != &other)
         {

@@ -44,9 +44,8 @@ private:
 
 public:
 
-    void Init();
-
     VertexArray();
+    ~VertexArray();
     
     void Bind() const;
     static void Unbind();
