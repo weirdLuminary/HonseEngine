@@ -7,15 +7,17 @@ private:
 
     GLuint m_RendererID = 0;
     GLuint m_Texture = 0;
+    bool m_Multisample = false;
 
 public:
 
-    FrameBuffer();
+    FrameBuffer(bool multisampling = false);
     ~FrameBuffer();
 
-    void Bind() const;
-    static void Unbind();
+    void Bind(bool read = true, bool write = true) const;
+    static void Unbind(bool read = true, bool write = true);
     static bool CheckComplete();
+    static void Blit(int width, int height);
 
     void AttachTexture(int width, int height);
     void ResizeTexture(int width, int height) const;

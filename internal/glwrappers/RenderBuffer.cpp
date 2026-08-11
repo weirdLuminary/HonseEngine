@@ -4,12 +4,7 @@ RenderBuffer::RenderBuffer(int w, int h) {
     glGenRenderbuffers(1, &m_RendererID);
     glBindRenderbuffer(GL_RENDERBUFFER, m_RendererID);
 
-    glRenderbufferStorage(
-        GL_RENDERBUFFER,
-        GL_DEPTH24_STENCIL8,
-        w,
-        h
-    );
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, w, h);
 
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
@@ -24,7 +19,7 @@ void RenderBuffer::AttachFramebuffer() const {
 }
 
 void RenderBuffer::Resize(int w, int h) const {
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, w, h);
 }
 
 void RenderBuffer::Bind() const {

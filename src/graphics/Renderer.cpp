@@ -47,6 +47,8 @@ struct Renderer::Impl {
     VertexBuffer quadVB;                                // Base quad VBO        
     IndexBuffer quadEB;                                 // Base quad EBO
 
+    glm::vec2 resolution;
+
     ////////////////        Main rendering      ////////////////                    
 
     VertexArray quadVA;                                 // Batch renderer VAO
@@ -72,6 +74,7 @@ struct Renderer::Impl {
 
 	VertexBuffer postProcQuadVB;
 	FrameBuffer frameBuffer;
+    FrameBuffer multisampleBuffer;
 	RenderBuffer renderBuffer;
 
     Resource<Shader> postProcShader;                    // Post-processing shader (will be user-defined)
@@ -79,13 +82,19 @@ struct Renderer::Impl {
     void initRenderData() {
 
         printf("%s\n\n", glGetString(GL_VERSION));
+
+        // glEnable(GL_DEBUG_OUTPUT);
+        // glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
+        // glDebugMessageCallback(GLDebugCallback, nullptr);
+        // glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
         glEnable(GL_BLEND);
         glEnable(GL_MULTISAMPLE);  
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 
-        glDebugMessageCallback(GLDebugCallback, nullptr);
-
         //////////////      Batch renderer      //////////////
+
+        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
         QuadVertex quad[] = {
             {{0.0f, 0.0f}, {0.0f, 0.0f}},
@@ -150,8 +159,13 @@ struct Renderer::Impl {
 
 		postProcQuadVB = VertexBuffer(postProcQuad, sizeof(postProcQuad));
 
+        multisampleBuffer = FrameBuffer(true);
+
 		frameBuffer.Bind();
 		frameBuffer.AttachTexture(800, 800);
+
+        multisampleBuffer.Bind();
+        multisampleBuffer.AttachTexture(800, 800);
 
 		renderBuffer = RenderBuffer(800, 800);
 		renderBuffer.Bind();
@@ -162,9 +176,12 @@ struct Renderer::Impl {
 
 		renderBuffer.Unbind();
 
-		frameBuffer.Unbind();
+		FrameBuffer::Unbind();
 
         postProcShader = honse::ResourceManager::Load<honse::Shader>("postProcess", "res/postProcessingTest.glsl", true);
+        postProcShader->Bind();
+        postProcShader->FindUniform("screenTexture").Set(0);
+
         postProcVA.AddBuffer(postProcQuadVB, {
             { 0, 2, GL_FLOAT }, // Individual position
             { 1, 2, GL_FLOAT }  // UV
@@ -177,6 +194,35 @@ struct Renderer::Impl {
 
         frameQuery = Query(GL_TIME_ELAPSED);
         primitiveQuery = Query(GL_PRIMITIVES_GENERATED);
+    }
+
+    void Clear() {
+        impl->multisampleBuffer.Bind();
+        glClear(GL_COLOR_BUFFER_BIT);
+        impl->frameBuffer.Bind();
+        glClear(GL_COLOR_BUFFER_BIT);
+        FrameBuffer::Unbind();
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    void ApplyPostProcessing() {
+
+        impl->postProcShader->Bind();
+        impl->postProcVA.Bind();
+        impl->quadEB.Bind();
+
+        impl->multisampleBuffer.Bind(true, false);
+        impl->frameBuffer.Bind(false, true);
+        impl->multisampleBuffer.Blit(impl->resolution.x, impl->resolution.y);
+
+        FrameBuffer::Unbind();
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, impl->frameBuffer.GetTexture());
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        impl->postProcVA.Unbind();
+        impl->postProcShader->Unbind();
     }
 
     int GetTextureSlot(GLuint handle)
@@ -210,6 +256,7 @@ void Renderer::OnResolutionChange(glm::vec2 resolution) {
     impl->projection = glm::ortho(0.0f, w, 0.0f, h);
 
 	impl->frameBuffer.ResizeTexture(w, h);
+    impl->multisampleBuffer.ResizeTexture(w, h);
 
 	impl->renderBuffer.Bind();
 	glViewport(0, 0, w, h);
@@ -217,6 +264,7 @@ void Renderer::OnResolutionChange(glm::vec2 resolution) {
 	impl->renderBuffer.Unbind();
 
     honse::Camera::GetMainCamera()->m_ViewportSize = resolution;
+    impl->resolution = resolution;
 }
 
 void Renderer::Init() {
@@ -294,15 +342,14 @@ void Renderer::Begin() {
     glm::mat4 vp = impl->projection * impl->view;
     impl->shader->FindUniform("u_ViewProjection").Set(vp);
 
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+
+    impl->Clear();
 }
 
 void Renderer::End() {
     Flush();
 
-    impl->postProcVA.Unbind();
-    impl->postProcShader->Unbind();
+    impl->ApplyPostProcessing();
 
     // End profiling timers
     impl->frameQuery.End();
@@ -314,15 +361,15 @@ void Renderer::End() {
     honse::Profiling::Set("Draw calls", impl->drawCalls);
 
     impl->drawCalls = 0;
+
+    
 }
 
 void Renderer::Flush() {
 
-	impl->frameBuffer.Bind();
+	impl->multisampleBuffer.Bind();
 
     impl->quadVA.Bind();
-    impl->quadVB.Bind();
-    impl->instanceVB.Bind();
     impl->quadEB.Bind();
     impl->shader->Bind();
 
@@ -335,22 +382,10 @@ void Renderer::Flush() {
         glBindTexture(GL_TEXTURE_2D, impl->textureSlots[i]);
     }
 
-	glClear(GL_COLOR_BUFFER_BIT);
-
     glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, impl->spriteCount);
-
-	FrameBuffer::Unbind();
 
     impl->spriteCount = 0;
     impl->instances.clear();
-
-	impl->postProcShader->Bind();
-	impl->postProcVA.Bind();
-	impl->postProcQuadVB.Bind();
-	impl->quadEB.Bind();
-	glBindTexture(GL_TEXTURE_2D, impl->frameBuffer.GetTexture());
-
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     impl->drawCalls++;
 };
