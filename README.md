@@ -12,26 +12,36 @@ It combines many systems, such as ECS, batch rendering via a manually written Op
 
 Honse Engine uses chunks of code from a few helper libraries, all of which can be found online. 
 
-| Library | Source |
-| --- | --- |
-| LECS (Lame ECS) | Custom-made; only present in the current project. |
-| GLFW | [Official website](https://www.glfw.org/) |
-| GLM | [Github repository](https://github.com/g-truc/glm) |
-| STB (Image utilities) | [Github repository](https://github.com/nothings/stb/) |
-| GLAD | [Github repository](https://github.com/Dav1dde/glad) |
-| FMOD | [Official website](https://www.fmod.com/) |
+| Library               | Source                                                        |
+|:---------------------:|:-------------------------------------------------------------:|
+| LECS (Lame ECS)       | Custom-made                                                   |
+| lumpack               | [Github repository](https://github.com/weirdLuminary/lumpack) |
+| FreeType              | [Github repository](github.com/freetype/freetype)             |
+| GLFW                  | [Official website](https://www.glfw.org/)                     |
+| GLM                   | [Github repository](https://github.com/g-truc/glm)            |
+| STB (Image utilities) | [Github repository](https://github.com/nothings/stb/)         |
+| GLAD                  | [Github repository](https://github.com/Dav1dde/glad)          |
+| FMOD                  | [Official website](https://www.fmod.com/)                     |
+| Box2D                 | [Official website](https://https://box2d.org/)                |
 
 
 ## TODO
 
 **Graphics:**
  - Animated sprites
+ - Figure out Z-index drawing
+ - (Current) Text rendering
 
-**Localization:**
+**(Later) Localization:**
  - Create localization string
- - *TBA*
+ - Figure out what to add.
+
+**Audio:**
+ - Figure out what additional features to add.
+
+**Physics:**
+ - Figure out how to implement the physics in the current engine state.
 
 **General:**
  - Scene Management (how to load/unload/save or serialize/deserialize)
- - Audio system
- - Event system
+ - Event system (possibly)

@@ -1,56 +1,64 @@
 #pragma once
-#include "View.hpp"
 #include "Registry.h"
+#include "View.hpp"
+#include <functional>
+#include <vector>
 
-class Actor; 
+class Actor;
 
 class World {
 
-public:
-
+  public:
     World();
 
     Entity CreateEntity();
+
     Actor CreateActor();
+    void DestroyActor(Entity id);
 
-    template<typename T>
-    void AddComponent(Entity ent, T component)
-    {
-        m_Registry.components->GetComponentArray<T>()->Add(ent, component);
+    template <typename T> void AddComponent(Entity ent, T component) {
+        Queue([this, ent, component]() {
+            m_Registry.components->GetComponentArray<T>()->Add(ent, component);
 
-        Signature newSignature = m_Registry.entities->GetSignature(ent);
-        newSignature.set(m_Registry.components->GetComponentType<T>(), true);
+            Signature newSignature = m_Registry.entities->GetSignature(ent);
+            newSignature.set(m_Registry.components->GetComponentType<T>(),
+                             true);
 
-        m_Registry.entities->SetSignature(ent, newSignature);
+            m_Registry.entities->SetSignature(ent, newSignature);
+        });
     }
 
-    template<typename SystemType>
-    void RegisterSystem() {
+    template <typename SystemType> void RegisterSystem() {
         m_Registry.systems->RegisterSystem<SystemType>(*this);
     }
-    
-    template<typename T>
-    void RemoveComponent(Entity ent) {
 
-        Signature newSignature = m_Registry.entities->GetSignature(ent).set(m_Registry.components->GetComponentType<T>(), false);
+    template <typename T> void RemoveComponent(Entity ent) {
 
-        m_Registry.components->DestroyComponent<T>(ent);
+        Queue([this, ent]() {
+            Signature newSignature = m_Registry.entities->GetSignature(ent).set(
+                m_Registry.components->GetComponentType<T>(), false);
 
-        m_Registry.entities->SetSignature(ent, newSignature);
+            m_Registry.components->DestroyComponent<T>(ent);
 
+            m_Registry.entities->SetSignature(ent, newSignature);
+        });
     }
 
     void Update();
+    void StartFrame();
+    void FlushDeferred();
 
-    template<typename... Components>
-    View<Components...> GetView() {
+    template <typename... Components> View<Components...> GetView() {
         return View<Components...>(&m_Registry);
     }
 
-private:
+  private:
+    void Queue(std::function<void()> function);
 
     Registry m_Registry;
 
-    template<typename...>
-    friend class View;
+    bool m_IsDeferred = false;
+    std::vector<std::function<void()>> m_DeferredFunctions;
+
+    template <typename...> friend class View;
 };

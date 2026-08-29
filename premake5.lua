@@ -1,6 +1,7 @@
 workspace "HonseEngine"
    	configurations { "Debug", "Release" }
     architecture "x86_64"
+    debugdir "%{wks.location}/bin/%{cfg.buildcfg}"
 
     filter "configurations:Debug"
         defines { "DEBUG" }
@@ -79,6 +80,30 @@ project "GLFW"
 
     filter {}
 
+--------------------------------------------------------------------------------
+-- BOX2D
+--------------------------------------------------------------------------------
+project "Box2D"
+    kind "StaticLib"
+    language "C"
+    pic "On"
+
+    targetdir "bin/%{cfg.buildcfg}"
+    objdir "bin-int/%{cfg.buildcfg}"
+
+    includedirs {
+        "ext/box2d/include",
+        "ext/box2d/src"
+    }
+
+    files {
+        "ext/box2d/src/**.c",
+        "ext/box2d/src/**.h"
+    }
+    
+
+    filter {}
+
 
 --------------------------------------------------------------------------------
 -- LECS
@@ -103,15 +128,83 @@ project "LECS"
 
     filter {}
 
+--------------------------------------------------------------------------------
+-- FREETYPE
+--------------------------------------------------------------------------------
+project "FreeType"
+    kind "StaticLib"
+    language "C"
+    pic "On"
+
+    targetdir "bin/%{cfg.buildcfg}"
+    objdir "bin-int/%{cfg.buildcfg}"
+
+    defines {
+        "FT2_BUILD_LIBRARY",
+    }
+
+    includedirs {
+        "ext/freetype/include",
+        "ext/freetype/src",
+    }
+
+    files {
+        "ext/freetype/include/ft2build.h",
+        "ext/freetype/include/freetype/**.h",
+
+        "ext/freetype/src/autofit/autofit.c",
+        "ext/freetype/src/base/ftbase.c",
+        "ext/freetype/src/base/ftbbox.c",
+        "ext/freetype/src/base/ftbdf.c",
+        "ext/freetype/src/base/ftbitmap.c",
+        "ext/freetype/src/base/ftcid.c",
+        "ext/freetype/src/base/ftfstype.c",
+        "ext/freetype/src/base/ftgasp.c",
+        "ext/freetype/src/base/ftglyph.c",
+        "ext/freetype/src/base/ftgxval.c",
+        "ext/freetype/src/base/ftinit.c",
+        "ext/freetype/src/base/ftmm.c",
+        "ext/freetype/src/base/ftotval.c",
+        "ext/freetype/src/base/ftpatent.c",
+        "ext/freetype/src/base/ftpfr.c",
+        "ext/freetype/src/base/ftstroke.c",
+        "ext/freetype/src/base/ftsynth.c",
+        "ext/freetype/src/base/fttype1.c",
+
+        "ext/freetype/src/bdf/bdf.c",
+        "ext/freetype/src/cache/ftcache.c",
+        "ext/freetype/src/cff/cff.c",
+        "ext/freetype/src/cid/type1cid.c",
+        "ext/freetype/src/lzw/ftlzw.c",
+        "ext/freetype/src/psaux/psaux.c",
+        "ext/freetype/src/pshinter/pshinter.c",
+        "ext/freetype/src/psnames/psnames.c",
+        "ext/freetype/src/raster/raster.c",
+        "ext/freetype/src/sfnt/sfnt.c",
+        "ext/freetype/src/smooth/smooth.c",
+        "ext/freetype/src/truetype/truetype.c",
+        "ext/freetype/src/type1/type1.c",
+        "ext/freetype/src/type42/type42.c",
+        "ext/freetype/src/winfonts/winfnt.c",
+
+        -- Linux:
+        "ext/freetype/builds/unix/ftsystem.c",
+        "ext/freetype/src/base/ftdebug.c",
+    }
+
+
+    filter {}
 
 --------------------------------------------------------------------------------
--- ENGINE + FMOD
+-- ENGINE; FMOD & LUMPACK
 --------------------------------------------------------------------------------
 project "HonseEngine"
     kind "SharedLib"
     language "C++"
     cppdialect "C++17"
     pic "On"
+
+
 
     targetdir "bin/%{cfg.buildcfg}"
     objdir "bin-int/%{cfg.buildcfg}"
@@ -130,12 +223,16 @@ project "HonseEngine"
         "ext/glad/include",
         "ext/fmod/include/fmod/core",
         "ext/fmod/include/fmod/studio",
-        "ext/glfw-3.4/include"
+        "ext/freetype/include",
+        "ext/glfw-3.4/include",
+        "ext/box2d/include"
     }
 
     links {
         "GLFW",
-        "LECS"     
+        "LECS",
+        "Box2D",
+        "FreeType"  
     }
 
     filter "system:linux"
@@ -152,8 +249,9 @@ project "HonseEngine"
         }
 
         postbuildcommands {
-            "{COPY} ext/fmod/lib/core/x86_64/*.so* %{cfg.targetdir}",
-            "{COPY} ext/fmod/lib/studio/x86_64/*.so* %{cfg.targetdir}"
+            "cp -Lf ext/fmod/lib/core/x86_64/libfmod.so.14.14 %{cfg.targetdir}/libfmod.so.14",
+            "cp -Lf ext/fmod/lib/studio/x86_64/libfmodstudio.so.14.14 %{cfg.targetdir}/libfmodstudio.so.14",
+            "rm -f bin/Debug/*.a"
         }
 
         linkoptions {
@@ -165,22 +263,25 @@ project "HonseEngine"
 --------------------------------------------------------------------------------
 -- EXAMPLE GAME
 --------------------------------------------------------------------------------
-project "Pong"
-	kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++17"
-    targetdir "bin/%{cfg.buildcfg}"
-    objdir "bin-int/%{cfg.buildcfg}"
+-- project "Pong"
+-- 	kind "ConsoleApp"
+--     language "C++"
+--     cppdialect "C++17"
+--     targetdir "bin/%{cfg.buildcfg}"
+--     objdir "bin-int/%{cfg.buildcfg}"
 
-    files {
-        "examples/pong/src/**.cpp"
-    }
+--     defines { "FMOD_STUDIO" }
 
-    includedirs {
-        "include",
-        "ext/lecs/include"
-    }
+--     files {
+--         "examples/pong/src/**.cpp"
+--     }
 
-    links {
-        "HonseEngine"
-    }
+--     includedirs {
+--         "include",
+--         "ext/lecs/include",
+--         "ext/lumpack/include"
+--     }
+
+--     links {
+--         "HonseEngine"
+--     }

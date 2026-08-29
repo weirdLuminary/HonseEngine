@@ -19,6 +19,8 @@ namespace honse
 
         static void Unload(Scene& scene);
 
+        static void StartFrame();
+        static void EndFrame();
         static void Update();
         static void Shutdown();
 

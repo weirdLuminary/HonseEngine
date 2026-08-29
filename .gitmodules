@@ -1,0 +1,9 @@
+[submodule "ext/box2d"]
+	path = ext/box2d
+	url = https://github.com/erincatto/box2d.git
+[submodule "ext/lumpack"]
+	path = ext/lumpack
+	url = https://github.com/weirdLuminary/lumpack
+[submodule "ext/freetype"]
+	path = ext/freetype
+	url = https://github.com/freetype/freetype.git

@@ -1,8 +1,10 @@
-#include <honse/audio/Audio.h>
-#include <fmod/studio/fmod_studio.hpp>
-#include <cstdio>
-#include <iostream>
 #include <BankInternal.h>
+#include <cassert>
+#include <cstdio>
+#include <fmod/core/fmod_errors.h>
+#include <fmod/studio/fmod_studio.hpp>
+#include <honse/audio/Audio.h>
+#include <iostream>
 
 std::unique_ptr<honse::Audio::Impl> honse::Audio::impl;
 
@@ -10,19 +12,22 @@ struct honse::Audio::Impl {
 
     FMOD::Studio::System* system = nullptr;
 
-    bool LoadFMODBank(honse::Bank& bank, const std::string& path)
-    {
+    bool LoadFMODBank(honse::Bank& bank, const std::string& path) {
         FMOD::Studio::Bank* fmodBank = nullptr;
 
-        FMOD_RESULT result = impl->system->loadBankFile(path.c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &fmodBank);
+        FMOD_RESULT result = impl->system->loadBankFile(
+            path.c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &fmodBank);
+
+        std::cout << FMOD_ErrorString(result) << '\n';
 
         if (result != FMOD_OK)
             return false;
 
         result = fmodBank->loadSampleData();
 
-        if (result != FMOD_OK)
-        {
+        std::cout << FMOD_ErrorString(result) << '\n';
+
+        if (result != FMOD_OK) {
             fmodBank->unload();
             return false;
         }
@@ -31,9 +36,7 @@ struct honse::Audio::Impl {
 
         return true;
     }
-
 };
-
 
 void honse::Audio::Init() {
 
@@ -41,40 +44,58 @@ void honse::Audio::Init() {
 
     FMOD_RESULT result;
 
-    result = FMOD::Studio::System::create(&impl->system);
-    if (result != FMOD_OK)
-    {
-        printf("FMOD error!\n");
-    }
+    FMOD::System* core = nullptr;
 
-    result = impl->system->initialize(128, FMOD_STUDIO_INIT_NORMAL, FMOD_INIT_NORMAL, 0);
-    if (result != FMOD_OK)
-    {
+    result = FMOD::Studio::System::create(&impl->system);
+    assert(result == FMOD_OK);
+
+    result = impl->system->getCoreSystem(&core);
+    assert(result == FMOD_OK);
+
+    result = impl->system->initialize(128, FMOD_STUDIO_INIT_NORMAL,
+                                      FMOD_INIT_NORMAL, nullptr);
+    if (result != FMOD_OK) {
         printf("FMOD error!\n");
     }
     printf("Initialized FMOD\n");
 }
 
-Resource<honse::Bank> honse::Audio::LoadBank(const std::string& id, const std::string& path) {
+void honse::Audio::PlayEvent(const std::string& id) {
+    FMOD::Studio::EventDescription* description = nullptr;
+    FMOD_RESULT result = impl->system->getEvent(id.c_str(), &description);
 
-    Resource<honse::Bank> bank = honse::ResourceManager::Construct<honse::Bank>(id,
-    [&]()
-    {
-        auto bank = honse::Bank::Create();
+    assert(result == FMOD_OK);
+    assert(description != nullptr);
 
-        if (!impl->LoadFMODBank(*bank, path))
-            return Resource<honse::Bank>{};
+    FMOD::Studio::EventInstance* event = nullptr;
+    result = description->createInstance(&event);
+    assert(result == FMOD_OK);
 
-        return bank;
-    });
+    result = event->start();
+    assert(result == FMOD_OK);
+
+    result = event->release();
+}
+
+Resource<honse::Bank> honse::Audio::LoadBank(const std::string& id,
+                                             const std::string& path) {
+
+    Resource<honse::Bank> bank =
+        honse::ResourceManager::Construct<honse::Bank>(id, [&]() {
+            auto bank = honse::Bank::Create();
+
+            if (!impl->LoadFMODBank(*bank, path))
+                return Resource<honse::Bank>{};
+
+            return bank;
+        });
 
     return bank;
 }
 
 void honse::Audio::Update() {
-    impl->system->update();
+    FMOD_RESULT result = impl->system->update();
+    assert(result == FMOD_OK);
 }
 
-void honse::Audio::Shutdown() {
-    impl->system->release();
-}
+void honse::Audio::Shutdown() { impl->system->release(); }

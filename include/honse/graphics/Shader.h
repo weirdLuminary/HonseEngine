@@ -7,22 +7,6 @@ namespace honse {
     
 
 
-    struct Uniform {
-
-        int ID;
-
-        void Set(int value);
-        void Set(float value);
-        void Set(const glm::ivec2& value);
-        void Set(const glm::vec2& value);
-        void Set(const glm::ivec3& value);
-        void Set(const glm::vec3& value);
-        void Set(const glm::mat4& value);
-        void Set(const glm::vec4& value);
-        void Set(const int* values, int count);
-
-    };
-
     class Shader {
 
     private:
@@ -121,7 +105,15 @@ namespace honse {
         Shader();                                                                   // Default implementation for both shaders
         ~Shader();
 
-        Uniform FindUniform(const std::string& name);
+        void Set(const std::string& name, int value);
+        void Set(const std::string& name, float value);
+        void Set(const std::string& name, const glm::ivec2& value);
+        void Set(const std::string& name, const glm::vec2& value);
+        void Set(const std::string& name, const glm::ivec3& value);
+        void Set(const std::string& name, const glm::vec3& value);
+        void Set(const std::string& name, const glm::mat4& value);
+        void Set(const std::string& name, const glm::vec4& value);
+        void Set(const std::string& name, const int* values, int count);
 
         Shader(const Shader&) = delete;
         Shader& operator=(const Shader&) = delete;

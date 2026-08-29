@@ -1,8 +1,8 @@
 #pragma once
-#include <memory>
-#include "EntityManager.h"
 #include "ComponentManager.hpp"
+#include "EntityManager.h"
 #include "SystemManager.h"
+#include <memory>
 
 struct Registry {
     std::shared_ptr<EntityManager> entities;

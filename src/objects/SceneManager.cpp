@@ -1,11 +1,10 @@
-#include <honse/objects/SceneManager.h>
-#include <honse/objects/Scene.h>
+#include <honse/modules/Threading.h>
 #include <honse/modules/components/Renderable.hpp>
 #include <honse/modules/profiling/ScopedTimer.h>
-#include <honse/modules/Threading.h>
+#include <honse/objects/Scene.h>
+#include <honse/objects/SceneManager.h>
 
-std::vector<std::unique_ptr<honse::Scene>>
-    honse::SceneManager::m_ActiveScenes;
+std::vector<std::unique_ptr<honse::Scene>> honse::SceneManager::m_ActiveScenes;
 
 void honse::SceneManager::Update() {
     ScopedTimer timer("ECS update time");
@@ -14,9 +13,19 @@ void honse::SceneManager::Update() {
     }
 }
 
-void honse::SceneManager::Shutdown() {
-    m_ActiveScenes.clear();
+void honse::SceneManager::StartFrame() {
+    for (std::unique_ptr<Scene>& scene : m_ActiveScenes) {
+        scene->GetWorld().StartFrame();
+    }
 }
+
+void honse::SceneManager::EndFrame() {
+    for (std::unique_ptr<Scene>& scene : m_ActiveScenes) {
+        scene->GetWorld().FlushDeferred();
+    }
+}
+
+void honse::SceneManager::Shutdown() { m_ActiveScenes.clear(); }
 
 honse::Scene& honse::SceneManager::Load(std::unique_ptr<Scene> scene) {
     Scene& ref = *scene;
@@ -29,6 +38,7 @@ honse::Scene& honse::SceneManager::CreateScene() {
     return *m_ActiveScenes.back();
 }
 
-const std::vector<std::unique_ptr<honse::Scene>>& honse::SceneManager::GetScenes() {
+const std::vector<std::unique_ptr<honse::Scene>>&
+honse::SceneManager::GetScenes() {
     return m_ActiveScenes;
 }

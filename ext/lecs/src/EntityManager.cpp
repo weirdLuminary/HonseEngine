@@ -28,7 +28,7 @@ Entity EntityManager::CreateEntity()
     return id;
 }
 
-void EntityManager::DestroyEntity(Entity& entity)
+void EntityManager::DestroyEntity(Entity entity)
 {
     assert(entity < MAX_ENTITIES && "Entity out of range.");
 
@@ -46,7 +46,7 @@ void EntityManager::DestroyEntity(Entity& entity)
     //std::cout << "-- Entity " << entity << '\n';
 }
 
-void EntityManager::SetSignature(Entity& entity, Signature signature)
+void EntityManager::SetSignature(Entity entity, Signature signature)
 {
     assert(entity < MAX_ENTITIES && "Entity out of range.");
 
@@ -55,7 +55,7 @@ void EntityManager::SetSignature(Entity& entity, Signature signature)
     //std::cout << "E > " << signature << '\n';
 }
 
-Signature EntityManager::GetSignature(Entity& entity)
+Signature EntityManager::GetSignature(Entity entity)
 {
     assert(entity < MAX_ENTITIES && "Entity out of range.");
 

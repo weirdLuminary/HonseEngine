@@ -1,12 +1,11 @@
-#include <honse/modules/File.h>
 #include <cstdio>
+#include <honse/modules/File.h>
 
-
-honse::File::File(std::string& path, bool binary) : m_Path(path), m_Binary(binary) {}
+honse::File::File(std::string& path, bool binary)
+    : m_Path(path), m_Binary(binary) {}
 
 void honse::File::Close() {
-    if (m_File != nullptr)
-    {
+    if (m_File != nullptr) {
         fclose(m_File);
         m_File = nullptr;
     }
@@ -14,23 +13,18 @@ void honse::File::Close() {
 
 void honse::File::Open(const char* args) {
 
-    if(m_File != NULL) {
+    if (m_File != NULL) {
         Close();
     }
 
     m_File = fopen(m_Path.c_str(), args);
 
-    if(m_File == NULL) {
+    if (m_File == NULL) {
         printf("File failed to open!");
     }
 }
 
-
-honse::File::~File() {
-
-    Close();
-
-}
+honse::File::~File() { Close(); }
 
 std::string honse::File::Read() {
 
@@ -46,7 +40,6 @@ std::string honse::File::Read() {
     Close();
 
     return text;
-
 }
 
 void honse::File::Write(std::string value, bool override) {
@@ -56,5 +49,4 @@ void honse::File::Write(std::string value, bool override) {
     fputs(value.c_str(), m_File);
 
     Close();
-
 }

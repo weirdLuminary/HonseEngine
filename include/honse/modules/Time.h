@@ -10,8 +10,10 @@ namespace honse
 
         Time() = delete;
 
+        static void Init();
+
         static const float GetDeltaTime() { return m_DeltaTime; }
-        static const uint64_t GetTime() { return m_Time; }
+        static const float GetTime() { return m_Time; }
 
     private:
 
@@ -20,8 +22,9 @@ namespace honse
 
         static float m_DeltaTime;
         static std::chrono::time_point<std::chrono::high_resolution_clock> m_LastFrameStart;
+        static std::chrono::time_point<std::chrono::high_resolution_clock> m_Start;
 
-        static uint64_t m_Time;
+        static float m_Time;
 
         friend class Engine;
 

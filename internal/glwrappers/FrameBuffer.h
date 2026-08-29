@@ -23,15 +23,21 @@ public:
     void ResizeTexture(int width, int height) const;
     const GLuint GetTexture() const;
 
+    GLuint GetID() { return m_RendererID; }
+
     // Remove copying
     
     FrameBuffer(const FrameBuffer&) = delete;
     FrameBuffer& operator=(const FrameBuffer&) = delete;
 
     FrameBuffer(FrameBuffer&& other) noexcept
-    : m_RendererID(other.m_RendererID)
+    : m_RendererID(other.m_RendererID),
+      m_Texture(other.m_Texture),
+      m_Multisample(other.m_Multisample)
     {
         other.m_RendererID = 0;
+        other.m_Texture = 0;
+        other.m_Multisample = false;
     }
 
     FrameBuffer& operator=(FrameBuffer&& other) noexcept
@@ -46,10 +52,14 @@ public:
 
             m_RendererID = other.m_RendererID;
             m_Texture = other.m_Texture;
+            m_Multisample = other.m_Multisample;
+
             other.m_RendererID = 0;
             other.m_Texture = 0;
+            other.m_Multisample = false;
         }
         return *this;
     }
+
 
 };

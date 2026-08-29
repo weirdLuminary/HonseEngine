@@ -12,12 +12,13 @@ FrameBuffer::~FrameBuffer() {
 void FrameBuffer::AttachTexture(int w, int h) {
 
     glGenTextures(1, &m_Texture);
-    glBindTexture(GL_TEXTURE_2D, m_Texture);
 
     if(m_Multisample) {
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_Texture);
         glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, w, h, GL_TRUE);
     }
     else {
+        glBindTexture(GL_TEXTURE_2D, m_Texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -29,6 +30,7 @@ void FrameBuffer::AttachTexture(int w, int h) {
 }
 
 void FrameBuffer::Blit(int w, int h) {
+    
     glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 

@@ -109,3 +109,27 @@ Will aim to expand the audio system to work properly; plans to add animated spri
 
 10.08.26 
 Post-processing is finished. Fixed potential segfault in File.cpp. Insignificant changes to design for some things.
+
+
+11.08.26
+Post-processing now works with basic anti-aliasing. Planning to add Z-index via ordering before batching.
+
+
+13.08.26
+Fixed components not being deleted with entities.
+
+
+14.08.26
+Minor code changes, added deferred entity/component modification. Spent half the time trying to fix a renderer issue that was actually application-related. My bad.
+
+
+XX-25.08.26
+Spent time working on an asset packing utility.
+
+
+28.08.26
+Finally implemented LumPack properly.
+
+
+29.08.26
+Added FreeType. Implementing font/text rendering.

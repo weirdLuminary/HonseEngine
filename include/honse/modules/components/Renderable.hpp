@@ -31,7 +31,7 @@ namespace honse {
                 glm::vec2& texSize = renderable.texture->size;
                 float rotationRad = glm::radians(transform.rotation);
 
-                AABB box = getRotatedAABB(transform.position, texSize, transform.pivot, rotationRad);
+                AABB box = getRotatedAABB(transform.position, texSize * transform.scale, transform.pivot, rotationRad);
                 
                 if(isColliding(box, honse::Camera::GetViewport())) { 
                     honse::Renderer::Submit(renderable.texture, transform.position, rotationRad, transform.scale, renderable.tint, transform.pivot);

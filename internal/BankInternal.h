@@ -1,12 +1,11 @@
 #pragma once
-#include <honse/audio/Bank.h>
 #include <fmod_studio.hpp>
+#include <honse/audio/Bank.h>
 
 namespace honse {
 
-    struct Bank::Impl {
+struct Bank::Impl {
 
-        FMOD::Studio::Bank* bank;
-
-    };
-}
+    FMOD::Studio::Bank* bank;
+};
+} // namespace honse

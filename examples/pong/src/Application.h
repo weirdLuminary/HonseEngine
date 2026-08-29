@@ -8,6 +8,9 @@ public:
     ~Pong();
 
     void Main();
+    void OnUpdate();
+
+
 
 };
 

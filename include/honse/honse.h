@@ -1,12 +1,11 @@
 #pragma once
 
+#include "EntryPoint.h"
 #include "graphics/Renderer.h"
 #include "graphics/Texture.h"
-#include "platform/Window.h"
-#include "platform/Input.h"
 #include "modules/resources/ResourceManager.h"
 #include "objects/SceneManager.h"
-#include "EntryPoint.h"
+#include "platform/Input.h"
+#include "platform/Window.h"
 
-using namespace glm;
 #define hs honse

@@ -2,25 +2,23 @@
 
 namespace honse {
 
-    class Application;
-    class Window;
+class Application;
+class Window;
 
-    class Engine {
+class Engine {
 
-    public:
+  public:
+    Engine() = delete;
 
-        Engine() = delete;
+    static void Init(Application* application);
+    static void Run();
+    static void Shutdown(int code = 0);
 
-        static void Init(Application* application);
-        static void Run();
-        static void Shutdown(int code = 0);
+  private:
+    static void CreateWindow();
 
-    private:
+    static Application* m_Application;
+    static Window* m_Window;
+};
 
-        static void CreateWindow();
-
-        static Application* m_Application;
-        static Window* m_Window;
-    };
-
-}
+} // namespace honse

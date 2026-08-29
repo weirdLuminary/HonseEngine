@@ -4,28 +4,26 @@
 // Abstract representation of the ECS entity ID with functions.
 class Actor {
 
-public:
-
+  public:
     Actor() = delete;
-    
-    template<typename T>
-    void AddComponent(T component) {
-        if(!m_Initialized) return;
+
+    template <typename T> void AddComponent(T component) {
+        if (!m_Initialized)
+            return;
 
         m_World->AddComponent<T>(m_ID, component);
     };
 
-    template<typename T>
-    void RemoveComponent() {
-        if(!m_Initialized) return;
+    template <typename T> void RemoveComponent() {
+        if (!m_Initialized)
+            return;
 
         m_World->RemoveComponent<T>(m_ID);
     };
 
     Entity GetInternalID() { return m_ID; }
 
-private:
-
+  private:
     Actor(World* world);
 
     World* m_World;
@@ -33,5 +31,4 @@ private:
     bool m_Initialized = false;
 
     friend class World;
-
 };

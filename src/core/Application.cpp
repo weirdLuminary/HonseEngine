@@ -2,10 +2,11 @@
 
 namespace honse {
 
-    Application::Application() = default;
+Application::Application() = default;
 
-    Application::~Application() = default;
+Application::~Application() = default;
 
-    void Application::Main() {};
+void Application::Main() {};
+void Application::OnUpdate() {};
 
-}
+} // namespace honse

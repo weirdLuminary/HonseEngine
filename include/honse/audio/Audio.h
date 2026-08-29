@@ -18,7 +18,13 @@ namespace honse {
 
         static void Update();
 
+        //#ifdef FMOD_STUDIO
+
         static Resource<honse::Bank> LoadBank(const std::string& id, const std::string& path);
+
+        static void PlayEvent(const std::string& id);
+
+        //#endif
 
     private:
 
