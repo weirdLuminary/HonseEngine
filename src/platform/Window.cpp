@@ -6,14 +6,12 @@
 honse::Window* honse::Window::m_CurrentWindow = nullptr;
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
-    honse::Renderer::OnResolutionChange({width, height});
+    honse::Renderer::OnResolutionChange({ width, height });
 }
 
 void honse::Window::BindWindow(Window* window) { m_CurrentWindow = window; }
 
-const honse::Window* honse::Window::GetCurrentWindow() {
-    return m_CurrentWindow;
-}
+const honse::Window* honse::Window::GetCurrentWindow() { return m_CurrentWindow; }
 
 honse::Window::Window(int w, int h, const char* title) {
 
@@ -31,7 +29,7 @@ honse::Window::Window(int w, int h, const char* title) {
     }
 }
 
-void honse::Window::Initialize() {
+void honse::Window::Initialize(ProjectPreferences& preferences) {
     if (!glfwInit()) {
         std::cout << "GLFW initialization failure!\n";
         return;
@@ -40,17 +38,19 @@ void honse::Window::Initialize() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwSwapInterval(1); // Enable VSync
-    glfwWindowHint(GLFW_SAMPLES, 4);
+    // glfwSwapInterval(preferences.windowPreferences.GetVSync() ? 1 : 0);
+    // glfwWindowHint(GLFW_SAMPLES, preferences.videoPreferences.GetMSAASamples());
+    // glfwWindowHint(GLFW_DECORATED, preferences.windowPreferences.GetDecorated() ? GLFW_TRUE : GLFW_FALSE);
+    // glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+    // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, preferences.windowPreferences.GetTransparentFramebuffer()
+    // ? GLFW_TRUE : GLFW_FALSE);
 }
 
 void honse::Window::PollEvents() const { glfwPollEvents(); }
 
 void honse::Window::SwapBuffers() const { glfwSwapBuffers(m_Window); }
 
-bool honse::Window::ShouldClose() const {
-    return glfwWindowShouldClose(m_Window);
-}
+bool honse::Window::ShouldClose() const { return glfwWindowShouldClose(m_Window); }
 
 glm::vec2 honse::Window::GetSize() const {
     int width;

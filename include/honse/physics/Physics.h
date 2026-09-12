@@ -3,20 +3,16 @@
 
 namespace honse {
 
-    class Physics {
+class Physics {
 
     public:
-
         Physics() = delete;
 
         // TBA
 
     private:
-
         struct Impl;
         std::unique_ptr<Impl> impl;
+};
 
-    };
-
-
-}
+} // namespace honse

@@ -1,14 +1,13 @@
 #pragma once
-#include <string>
-#include <memory>
 #include <glm/glm.hpp>
+#include <memory>
+#include <string>
 
 namespace honse {
 
-    class Texture {
+class Texture {
 
     public:
-
         glm::vec2 size;
         int channels = 0;
 
@@ -23,7 +22,6 @@ namespace honse {
         Texture& operator=(Texture&&) noexcept;
 
     private:
-
         void Bind(unsigned int slot) const;
         unsigned int GetHandle();
 
@@ -31,6 +29,6 @@ namespace honse {
         std::unique_ptr<Impl> impl;
 
         friend class Renderer;
-    };
+};
 
-}
+} // namespace honse

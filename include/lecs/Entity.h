@@ -3,6 +3,8 @@
 #include <bitset>
 #include <cstdint>
 
+namespace lecs {
+
 // The ID of an individual entity slot.
 using Entity = unsigned int;
 
@@ -14,3 +16,5 @@ using ComponentType = uint8_t;
 
 // Describes which components are assigned to the entity index.
 using Signature = std::bitset<MAX_COMPONENTS>;
+
+} // namespace lecs

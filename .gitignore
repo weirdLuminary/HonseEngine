@@ -5,3 +5,8 @@ obj/**
 *.make
 Makefile
 format.sh
+pack.sh
+res
+tmp
+prepare.sh
+docs

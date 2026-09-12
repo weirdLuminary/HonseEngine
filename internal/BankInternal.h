@@ -5,7 +5,6 @@
 namespace honse {
 
 struct Bank::Impl {
-
-    FMOD::Studio::Bank* bank;
+        FMOD::Studio::Bank* bank;
 };
 } // namespace honse

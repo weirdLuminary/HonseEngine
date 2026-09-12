@@ -3,7 +3,7 @@
 #include <cassert>
 #include <algorithm>
 
-EntityManager::EntityManager() {
+lecs::EntityManager::EntityManager() {
     m_ActiveEntities.reserve(MAX_ENTITIES);
     for (Entity entity = 0; entity < MAX_ENTITIES; ++entity)
     {
@@ -12,11 +12,11 @@ EntityManager::EntityManager() {
 }
 
 
-Entity EntityManager::CreateEntity()
+lecs::Entity lecs::EntityManager::CreateEntity()
 {
     assert(m_ActiveEntityCount < MAX_ENTITIES && "Too many entities in existence.");
 
-    Entity id = m_AvailableSlots.front();
+    lecs::Entity id = m_AvailableSlots.front();
     m_AvailableSlots.pop();
 
     m_ActiveEntities.push_back(id);
@@ -28,7 +28,7 @@ Entity EntityManager::CreateEntity()
     return id;
 }
 
-void EntityManager::DestroyEntity(Entity entity)
+void lecs::EntityManager::DestroyEntity(lecs::Entity entity)
 {
     assert(entity < MAX_ENTITIES && "Entity out of range.");
 
@@ -46,7 +46,7 @@ void EntityManager::DestroyEntity(Entity entity)
     //std::cout << "-- Entity " << entity << '\n';
 }
 
-void EntityManager::SetSignature(Entity entity, Signature signature)
+void lecs::EntityManager::SetSignature(lecs::Entity entity, lecs::Signature signature)
 {
     assert(entity < MAX_ENTITIES && "Entity out of range.");
 
@@ -55,7 +55,7 @@ void EntityManager::SetSignature(Entity entity, Signature signature)
     //std::cout << "E > " << signature << '\n';
 }
 
-Signature EntityManager::GetSignature(Entity entity)
+lecs::Signature lecs::EntityManager::GetSignature(lecs::Entity entity)
 {
     assert(entity < MAX_ENTITIES && "Entity out of range.");
 

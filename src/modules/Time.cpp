@@ -1,20 +1,14 @@
-#include <honse/modules/Time.h>
-#include <honse/modules/profiling/Profiling.h>
+#include <honse/profiling/Profiling.h>
+#include <honse/utilities/Time.h>
 
 float honse::Time::m_DeltaTime;
-std::chrono::time_point<std::chrono::high_resolution_clock>
-    honse::Time::m_LastFrameStart;
-std::chrono::time_point<std::chrono::high_resolution_clock>
-    honse::Time::m_Start;
+std::chrono::time_point<std::chrono::high_resolution_clock> honse::Time::m_LastFrameStart;
+std::chrono::time_point<std::chrono::high_resolution_clock> honse::Time::m_Start;
 float honse::Time::m_Time;
 
-void honse::Time::Init() {
-    m_Start = std::chrono::high_resolution_clock::now();
-}
+void honse::Time::Init() { m_Start = std::chrono::high_resolution_clock::now(); }
 
-void honse::Time::StartFrame() {
-    m_LastFrameStart = std::chrono::high_resolution_clock::now();
-}
+void honse::Time::StartFrame() { m_LastFrameStart = std::chrono::high_resolution_clock::now(); }
 
 void honse::Time::EndFrame() {
     auto now = std::chrono::high_resolution_clock::now();

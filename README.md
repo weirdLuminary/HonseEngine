@@ -28,7 +28,6 @@ Honse Engine uses chunks of code from a few helper libraries, all of which can b
 ## TODO
 
 **Graphics:**
- - Animated sprites
  - Figure out Z-index drawing
  - (Current) Text rendering
 

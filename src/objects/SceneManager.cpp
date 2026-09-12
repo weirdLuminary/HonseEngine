@@ -1,8 +1,8 @@
-#include <honse/modules/Threading.h>
-#include <honse/modules/components/Renderable.hpp>
-#include <honse/modules/profiling/ScopedTimer.h>
-#include <honse/objects/Scene.h>
-#include <honse/objects/SceneManager.h>
+#include <honse/components/Renderable.hpp>
+#include <honse/components/Scene.h>
+#include <honse/components/SceneManager.h>
+#include <honse/profiling/ScopedTimer.h>
+#include <honse/utilities/Threading.h>
 
 std::vector<std::unique_ptr<honse::Scene>> honse::SceneManager::m_ActiveScenes;
 
@@ -38,7 +38,4 @@ honse::Scene& honse::SceneManager::CreateScene() {
     return *m_ActiveScenes.back();
 }
 
-const std::vector<std::unique_ptr<honse::Scene>>&
-honse::SceneManager::GetScenes() {
-    return m_ActiveScenes;
-}
+const std::vector<std::unique_ptr<honse::Scene>>& honse::SceneManager::GetScenes() { return m_ActiveScenes; }

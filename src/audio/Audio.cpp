@@ -10,32 +10,32 @@ std::unique_ptr<honse::Audio::Impl> honse::Audio::impl;
 
 struct honse::Audio::Impl {
 
-    FMOD::Studio::System* system = nullptr;
+        FMOD::Studio::System* system = nullptr;
 
-    bool LoadFMODBank(honse::Bank& bank, const std::string& path) {
-        FMOD::Studio::Bank* fmodBank = nullptr;
+        bool LoadFMODBank(honse::Bank& bank, const std::string& path) {
+            FMOD::Studio::Bank* fmodBank = nullptr;
 
-        FMOD_RESULT result = impl->system->loadBankFile(
-            path.c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &fmodBank);
+            FMOD_RESULT result =
+                impl->system->loadBankFile(path.c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &fmodBank);
 
-        std::cout << FMOD_ErrorString(result) << '\n';
+            std::cout << FMOD_ErrorString(result) << '\n';
 
-        if (result != FMOD_OK)
-            return false;
+            if (result != FMOD_OK)
+                return false;
 
-        result = fmodBank->loadSampleData();
+            result = fmodBank->loadSampleData();
 
-        std::cout << FMOD_ErrorString(result) << '\n';
+            std::cout << FMOD_ErrorString(result) << '\n';
 
-        if (result != FMOD_OK) {
-            fmodBank->unload();
-            return false;
+            if (result != FMOD_OK) {
+                fmodBank->unload();
+                return false;
+            }
+
+            bank.impl->bank = fmodBank;
+
+            return true;
         }
-
-        bank.impl->bank = fmodBank;
-
-        return true;
-    }
 };
 
 void honse::Audio::Init() {
@@ -52,8 +52,7 @@ void honse::Audio::Init() {
     result = impl->system->getCoreSystem(&core);
     assert(result == FMOD_OK);
 
-    result = impl->system->initialize(128, FMOD_STUDIO_INIT_NORMAL,
-                                      FMOD_INIT_NORMAL, nullptr);
+    result = impl->system->initialize(128, FMOD_STUDIO_INIT_NORMAL, FMOD_INIT_NORMAL, nullptr);
     if (result != FMOD_OK) {
         printf("FMOD error!\n");
     }
@@ -77,18 +76,16 @@ void honse::Audio::PlayEvent(const std::string& id) {
     result = event->release();
 }
 
-Resource<honse::Bank> honse::Audio::LoadBank(const std::string& id,
-                                             const std::string& path) {
+Resource<honse::Bank> honse::Audio::LoadBank(const std::string& id, const std::string& path) {
 
-    Resource<honse::Bank> bank =
-        honse::ResourceManager::Construct<honse::Bank>(id, [&]() {
-            auto bank = honse::Bank::Create();
+    Resource<honse::Bank> bank = honse::ResourceManager::Construct<honse::Bank>(id, [&]() {
+        auto bank = honse::Bank::Create();
 
-            if (!impl->LoadFMODBank(*bank, path))
-                return Resource<honse::Bank>{};
+        if (!impl->LoadFMODBank(*bank, path))
+            return Resource<honse::Bank> {};
 
-            return bank;
-        });
+        return bank;
+    });
 
     return bank;
 }

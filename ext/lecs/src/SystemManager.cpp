@@ -1,9 +1,9 @@
 #include <lecs/SystemManager.h>
 #include <lecs/World.h>
-#include <honse/modules/profiling/ScopedTimer.h>
-#include <honse/modules/Threading.h>
+#include <honse/profiling/ScopedTimer.h>
+#include <honse/utilities/Threading.h>
 
-void SystemManager::OnEntityDestroyed(Entity ent) {
+void lecs::SystemManager::OnEntityDestroyed(lecs::Entity ent) {
     for (auto const& pair : m_Systems) {
         auto const& system = pair.second;
 
@@ -11,7 +11,7 @@ void SystemManager::OnEntityDestroyed(Entity ent) {
     }
 }
 
-void SystemManager::Update(World& world) {
+void lecs::SystemManager::Update(lecs::World& world) {
     for (auto const& pair : m_Systems) {
         honse::Threading::Enqueue([&] {
             

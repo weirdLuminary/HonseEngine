@@ -1,8 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 
-struct QuadVertex
-{
-    glm::vec2 position;
-    glm::vec2 uv;
+struct QuadVertex {
+    public:
+        glm::vec2 position;
+        glm::vec2 uv;
 };

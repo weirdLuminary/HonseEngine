@@ -1,8 +1,7 @@
 #include <cstdio>
-#include <honse/modules/File.h>
+#include <honse/utilities/File.h>
 
-honse::File::File(std::string& path, bool binary)
-    : m_Path(path), m_Binary(binary) {}
+honse::File::File(std::string& path, bool binary) : m_Path(path), m_Binary(binary) {}
 
 void honse::File::Close() {
     if (m_File != nullptr) {

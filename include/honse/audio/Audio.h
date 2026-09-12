@@ -1,16 +1,15 @@
 #pragma once
+#include <honse/resources/ResourceManager.h>
 #include <memory>
 #include <string>
-#include <honse/modules/resources/ResourceManager.h>
 
 namespace honse {
 
-    class Bank;
+class Bank;
 
-    class Audio {
+class Audio {
 
     public:
-
         Audio() = delete;
 
         static void Init();
@@ -18,21 +17,19 @@ namespace honse {
 
         static void Update();
 
-        //#ifdef FMOD_STUDIO
+        // #ifdef FMOD_STUDIO
 
         static Resource<honse::Bank> LoadBank(const std::string& id, const std::string& path);
 
         static void PlayEvent(const std::string& id);
 
-        //#endif
+        // #endif
 
     private:
-
         struct Impl;
         static std::unique_ptr<Impl> impl;
 
         friend class Bank;
-
-    };
-
 };
+
+}; // namespace honse

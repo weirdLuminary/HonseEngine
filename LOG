@@ -133,3 +133,11 @@ Finally implemented LumPack properly.
 
 29.08.26
 Added FreeType. Implementing font/text rendering.
+
+
+30-31.08.26
+Implemented animated/atlas sprites. 
+
+
+12.09.26
+Absolutely forgot to start documenting things! I made Doxygen docs and restructured the engine a bit to make it prettier.

@@ -13,6 +13,20 @@ workspace "HonseEngine"
 
     filter {}
 
+newaction {
+    trigger = "docs",
+    description = "Generate Doxygen documentation",
+
+    execute = function()
+        local ok, reason, code = os.execute("doxygen Doxyfile")
+
+        if not ok then
+            error("Doxygen failed: " .. tostring(reason) ..
+                  " (exit code " .. tostring(code) .. ")")
+        end
+    end
+}
+
 --------------------------------------------------------------------------------
 -- GLFW (STATIC, X11 ONLY) + GLAD
 --------------------------------------------------------------------------------
@@ -141,6 +155,8 @@ project "FreeType"
 
     defines {
         "FT2_BUILD_LIBRARY",
+        "HAVE_UNISTD_H",
+        "HAVE_FCNTL_H",
     }
 
     includedirs {
@@ -171,6 +187,16 @@ project "FreeType"
         "ext/freetype/src/base/ftsynth.c",
         "ext/freetype/src/base/fttype1.c",
 
+        "ext/freetype/src/hvf/hvf.c",
+        "ext/freetype/src/pfr/pfr.c",
+        "ext/freetype/src/pcf/pcf.c",
+
+        "ext/freetype/src/svg/svg.c",
+        "ext/freetype/src/sdf/sdf.c",
+
+        "ext/freetype/src/gzip/ftgzip.c",
+        "ext/freetype/src/bzip2/ftbzip2.c",
+
         "ext/freetype/src/bdf/bdf.c",
         "ext/freetype/src/cache/ftcache.c",
         "ext/freetype/src/cff/cff.c",
@@ -196,6 +222,30 @@ project "FreeType"
     filter {}
 
 --------------------------------------------------------------------------------
+-- STB_IMAGE
+--------------------------------------------------------------------------------
+project "STB_Image"
+    kind "StaticLib"
+    language "C++"
+    pic "On"
+
+    targetdir "bin/%{cfg.buildcfg}"
+    objdir "bin-int/%{cfg.buildcfg}"
+
+    includedirs {
+        "ext/stb_image"
+    }
+
+    files {
+		"ext/stb_image/stb_image.cpp"
+	}
+
+
+    filter {}
+
+
+    
+--------------------------------------------------------------------------------
 -- ENGINE; FMOD & LUMPACK
 --------------------------------------------------------------------------------
 project "HonseEngine"
@@ -213,16 +263,17 @@ project "HonseEngine"
         "internal/**.cpp",
         "src/**.h",
         "src/**.cpp",
+        "internal/lumpack.c"
     }
 
     includedirs {
         "include",
         "internal",
-        "ext/lecs/include",
         "ext/fmod/include",
         "ext/glad/include",
         "ext/fmod/include/fmod/core",
         "ext/fmod/include/fmod/studio",
+        "ext/stb_image",
         "ext/freetype/include",
         "ext/glfw-3.4/include",
         "ext/box2d/include"
@@ -232,7 +283,8 @@ project "HonseEngine"
         "GLFW",
         "LECS",
         "Box2D",
-        "FreeType"  
+        "FreeType",
+        "STB_Image"
     }
 
     filter "system:linux"
@@ -261,27 +313,30 @@ project "HonseEngine"
     filter {}
 
 --------------------------------------------------------------------------------
--- EXAMPLE GAME
+-- SANDBOX/EXAMPLE
 --------------------------------------------------------------------------------
--- project "Pong"
--- 	kind "ConsoleApp"
---     language "C++"
---     cppdialect "C++17"
---     targetdir "bin/%{cfg.buildcfg}"
---     objdir "bin-int/%{cfg.buildcfg}"
+project "Sandbox"
+	kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    
+    targetdir "bin/%{cfg.buildcfg}"
+    objdir "bin-int/%{cfg.buildcfg}"
 
---     defines { "FMOD_STUDIO" }
+    defines { "FMOD_STUDIO", "HONSE_ENABLE_ATLAS" }
 
---     files {
---         "examples/pong/src/**.cpp"
---     }
+    files {
+        "examples/sandbox/src/**.cpp"
+    }
 
---     includedirs {
---         "include",
---         "ext/lecs/include",
---         "ext/lumpack/include"
---     }
+    postbuildcommands {
+        ""
+    }
 
---     links {
---         "HonseEngine"
---     }
+    includedirs {
+        "include",
+    }
+
+    links {
+        "HonseEngine"
+    }

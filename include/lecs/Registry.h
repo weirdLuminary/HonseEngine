@@ -4,8 +4,12 @@
 #include "SystemManager.h"
 #include <memory>
 
+namespace lecs {
+
 struct Registry {
-    std::shared_ptr<EntityManager> entities;
-    std::shared_ptr<ComponentManager> components;
-    std::shared_ptr<SystemManager> systems;
+        std::shared_ptr<EntityManager> entities;
+        std::shared_ptr<ComponentManager> components;
+        std::shared_ptr<SystemManager> systems;
 };
+
+} // namespace lecs

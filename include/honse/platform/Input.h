@@ -1,24 +1,44 @@
 #pragma once
-#include <glm/glm.hpp>
 #include "Window.h"
+#include <glm/glm.hpp>
 
 namespace honse {
 
-
-    class Input
-    {
+class Input {
     public:
-
-        enum class Key : uint8_t
-        {
+        enum class Key : uint8_t {
             None = 0x00,
             ErrorRollOver = 0x01,
             POSTFail = 0x02,
             ErrorUndefined = 0x03,
 
             // Letters
-            A = 0x04, B, C, D, E, F, G, H, I, J, K, L, M,
-            N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+            A = 0x04,
+            B,
+            C,
+            D,
+            E,
+            F,
+            G,
+            H,
+            I,
+            J,
+            K,
+            L,
+            M,
+            N,
+            O,
+            P,
+            Q,
+            R,
+            S,
+            T,
+            U,
+            V,
+            W,
+            X,
+            Y,
+            Z,
 
             // Numbers
             One = 0x1E,
@@ -192,23 +212,24 @@ namespace honse {
         };
 
         enum KeyModifiers : uint8_t {
-            
-            LeftControl  = 1 << 0,
-            LeftShift    = 1 << 1,
-            LeftAlt      = 1 << 2,
-            LeftMeta     = 1 << 3,
+
+            LeftControl = 1 << 0,
+            LeftShift = 1 << 1,
+            LeftAlt = 1 << 2,
+            LeftMeta = 1 << 3,
             RightControl = 1 << 4,
-            RightShift   = 1 << 5,
-            RightAlt     = 1 << 6,
-            RightMeta    = 1 << 7,
+            RightShift = 1 << 5,
+            RightAlt = 1 << 6,
+            RightMeta = 1 << 7,
         };
 
         static bool IsKeyDown(Key key);
         static bool IsMouseButtonDown(int button);
 
+        static bool IsKeyJustPressed(Key key);
+        static bool IsMouseButtonJustPressed(int button);
+
         static glm::vec2 GetMousePosition();
+};
 
-    };
-
-
-}
+} // namespace honse

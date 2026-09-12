@@ -1,4 +1,4 @@
-#include <honse/modules/Threading.h>
+#include <honse/utilities/Threading.h>
 #include <iostream>
 
 std::vector<std::thread> honse::Threading::m_Threads;
@@ -23,8 +23,7 @@ void honse::Threading::Init() {
 void honse::Threading::Wait() {
 
     std::unique_lock lock(m_Mutex);
-    m_Condition.wait(
-        lock, [] { return m_ThreadPool.empty() && m_ActiveThreads <= 0; });
+    m_Condition.wait(lock, [] { return m_ThreadPool.empty() && m_ActiveThreads <= 0; });
 }
 
 void honse::Threading::Shutdown() {
@@ -57,8 +56,7 @@ void honse::Threading::RunPool() {
 
             std::unique_lock lock(m_Mutex);
 
-            m_Condition.wait(
-                lock, [] { return !m_ThreadPool.empty() || !m_Running; });
+            m_Condition.wait(lock, [] { return !m_ThreadPool.empty() || !m_Running; });
 
             if (!m_Running)
                 return;

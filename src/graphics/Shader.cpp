@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include <honse/graphics/Shader.h>
-#include <honse/modules/File.h>
+#include <honse/utilities/File.h>
 
 using namespace honse;
 
@@ -134,16 +134,14 @@ void Shader::AttachShaders() {
     glDeleteShader(fragmentShader);
 }
 
-Shader::Shader(std::string fragmentPath, bool postProcessing)
-    : postProcessing(postProcessing) {
+Shader::Shader(std::string fragmentPath, bool postProcessing) : postProcessing(postProcessing) {
 
     m_RendererID = glCreateProgram();
     printf("Created shader program %d!\n", m_RendererID);
 
     File fragFile(fragmentPath);
 
-    vertexShader = Compile(postProcessing ? basicVertexSrc : defaultVertexSrc,
-                           GL_VERTEX_SHADER);
+    vertexShader = Compile(postProcessing ? basicVertexSrc : defaultVertexSrc, GL_VERTEX_SHADER);
     fragmentShader = Compile(fragFile.Read(), GL_FRAGMENT_SHADER);
 
     AttachShaders();

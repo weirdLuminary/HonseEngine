@@ -9,12 +9,12 @@ Texture::Texture(Texture&&) noexcept = default;
 Texture& Texture::operator=(Texture&&) noexcept = default;
 
 struct Texture::Impl {
+    public:
+        unsigned char* data = nullptr;
 
-    unsigned char* data = nullptr;
+        GLuint rendererID = 0;
 
-    GLuint rendererID = 0;
-
-    friend class Renderer;
+        friend class Renderer;
 };
 
 unsigned int Texture::GetHandle() { return impl->rendererID; }
@@ -55,8 +55,7 @@ Texture::Texture(const std::string& path) : impl(std::make_unique<Impl>()) {
 
     GLenum format = channels == 4 ? GL_RGBA : GL_RGB;
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, format,
-                 GL_UNSIGNED_BYTE, impl->data);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, format, GL_UNSIGNED_BYTE, impl->data);
     // glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(impl->data);

@@ -4,14 +4,14 @@
 #include "Application.h"
 #include "Engine.h"
 
-extern honse::Application* honse::CreateApplication();
+extern honse::HonseProject* honse::CreateProject();
 
 // Platform-agnostic entry point wrapper
 int main(int argc, char** argv) {
 
     printf("Engine bootstrapping...\n");
 
-    auto* application = honse::CreateApplication();
+    auto* application = honse::CreateProject();
 
     honse::Engine::Init(application);
     honse::Engine::Run();

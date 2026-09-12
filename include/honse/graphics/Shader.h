@@ -1,16 +1,13 @@
 #pragma once
-#include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
 
 namespace honse {
-    
 
-
-    class Shader {
+class Shader {
 
     private:
-
         unsigned int m_RendererID = 0;
 
         unsigned int vertexShader = 0;
@@ -40,7 +37,8 @@ namespace honse {
             layout(location = 5) in vec2 a_Scale;
             layout(location = 6) in vec2 a_Pivot;
             layout(location = 7) in vec2 a_Size;
-            layout(location = 8) in int a_TextureSlot;
+            layout(location = 8) in vec4 a_UVrect;
+            layout(location = 9) in int a_TextureSlot;
 
             uniform mat4 u_ViewProjection;
 
@@ -66,7 +64,7 @@ namespace honse {
 
                 gl_Position = u_ViewProjection * vec4(p, 0.0, 1.0);
 
-                v_TexCoord = a_UV;
+                v_TexCoord = a_UV * a_UVrect.zw + a_UVrect.xy;
                 v_Color = a_Tint;
                 v_TextureSlot = a_TextureSlot;
             }
@@ -99,10 +97,11 @@ namespace honse {
         friend class Renderer;
 
     public:
-
-        Shader(std::string vertexPath, std::string fragmentPath);                   // For custom vertex shader
-        Shader(std::string fragmentPath, bool postProcessing = false);              // For default vertex shader/post-processing shader
-        Shader();                                                                   // Default implementation for both shaders
+        Shader(std::string vertexPath,
+            std::string fragmentPath); // For custom vertex shader
+        Shader(std::string fragmentPath,
+            bool postProcessing = false); // For default vertex shader/post-processing shader
+        Shader();                         // Default implementation for both shaders
         ~Shader();
 
         void Set(const std::string& name, int value);
@@ -118,17 +117,12 @@ namespace honse {
         Shader(const Shader&) = delete;
         Shader& operator=(const Shader&) = delete;
 
-        Shader(Shader&& other) noexcept
-        {
+        Shader(Shader&& other) noexcept {
             m_RendererID = other.m_RendererID;
             other.m_RendererID = 0;
         }
 
         Shader& operator=(Shader&& other) noexcept;
+};
 
-    };
-
-   
-
-
-}
+} // namespace honse

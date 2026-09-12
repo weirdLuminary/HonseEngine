@@ -3,63 +3,55 @@
 
 class FrameBuffer {
 
-private:
+    private:
+        GLuint m_RendererID = 0;
+        GLuint m_Texture = 0;
+        bool m_Multisample = false;
 
-    GLuint m_RendererID = 0;
-    GLuint m_Texture = 0;
-    bool m_Multisample = false;
+    public:
+        FrameBuffer(bool multisampling = false);
+        ~FrameBuffer();
 
-public:
+        void Bind(bool read = true, bool write = true) const;
+        static void Unbind(bool read = true, bool write = true);
+        static bool CheckComplete();
+        static void Blit(int width, int height);
 
-    FrameBuffer(bool multisampling = false);
-    ~FrameBuffer();
+        void AttachTexture(int width, int height);
+        void ResizeTexture(int width, int height) const;
+        const GLuint GetTexture() const;
 
-    void Bind(bool read = true, bool write = true) const;
-    static void Unbind(bool read = true, bool write = true);
-    static bool CheckComplete();
-    static void Blit(int width, int height);
+        GLuint GetID() { return m_RendererID; }
 
-    void AttachTexture(int width, int height);
-    void ResizeTexture(int width, int height) const;
-    const GLuint GetTexture() const;
+        // Remove copying
 
-    GLuint GetID() { return m_RendererID; }
+        FrameBuffer(const FrameBuffer&) = delete;
+        FrameBuffer& operator=(const FrameBuffer&) = delete;
 
-    // Remove copying
-    
-    FrameBuffer(const FrameBuffer&) = delete;
-    FrameBuffer& operator=(const FrameBuffer&) = delete;
-
-    FrameBuffer(FrameBuffer&& other) noexcept
-    : m_RendererID(other.m_RendererID),
-      m_Texture(other.m_Texture),
-      m_Multisample(other.m_Multisample)
-    {
-        other.m_RendererID = 0;
-        other.m_Texture = 0;
-        other.m_Multisample = false;
-    }
-
-    FrameBuffer& operator=(FrameBuffer&& other) noexcept
-    {
-        if (this != &other)
-        {
-            if (m_Texture != 0)
-                glDeleteTextures(1, &m_Texture);
-
-            if (m_RendererID != 0)
-                glDeleteFramebuffers(1, &m_RendererID);
-
-            m_RendererID = other.m_RendererID;
-            m_Texture = other.m_Texture;
-            m_Multisample = other.m_Multisample;
-
+        FrameBuffer(FrameBuffer&& other) noexcept
+            : m_RendererID(other.m_RendererID), m_Texture(other.m_Texture),
+              m_Multisample(other.m_Multisample) {
             other.m_RendererID = 0;
             other.m_Texture = 0;
             other.m_Multisample = false;
         }
-        return *this;
-    }
 
+        FrameBuffer& operator=(FrameBuffer&& other) noexcept {
+            if (this != &other) {
+                if (m_Texture != 0)
+                    glDeleteTextures(1, &m_Texture);
 
+                if (m_RendererID != 0)
+                    glDeleteFramebuffers(1, &m_RendererID);
+
+                m_RendererID = other.m_RendererID;
+                m_Texture = other.m_Texture;
+                m_Multisample = other.m_Multisample;
+
+                other.m_RendererID = 0;
+                other.m_Texture = 0;
+                other.m_Multisample = false;
+            }
+            return *this;
+        }
 };

@@ -1,19 +1,24 @@
 #pragma once
-#include "platform/Window.h"
+#include "Preferences.h"
+#include <stdint.h>
 
 namespace honse {
 
-class Application {
+class HonseProject {
 
-  public:
-    Application();
-    virtual ~Application();
+    public:
+        HonseProject();
+        virtual ~HonseProject();
 
-    virtual void Main();     // Application entry point that runs once.
-    virtual void OnUpdate(); // Function that runs every frame independently.
-                             // Useful for interacting with rendering context.
+        virtual void Main();     // Application entry point that runs once.
+        virtual void OnUpdate(); // Function that runs every frame independently. Useful for interacting with
+                                 // rendering context.
+
+        void UpdatePreferences();
+
+        ProjectPreferences preferences;
 };
 
-Application* CreateApplication();
+HonseProject* CreateProject();
 
 }; // namespace honse

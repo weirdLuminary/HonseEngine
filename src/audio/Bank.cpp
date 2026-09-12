@@ -6,6 +6,4 @@ honse::Bank::Bank() : impl(std::make_unique<Impl>()) {}
 
 honse::Bank::~Bank() { impl->bank->unload(); }
 
-std::shared_ptr<honse::Bank> honse::Bank::Create() {
-    return std::shared_ptr<honse::Bank>(new honse::Bank());
-}
+std::shared_ptr<honse::Bank> honse::Bank::Create() { return std::shared_ptr<honse::Bank>(new honse::Bank()); }

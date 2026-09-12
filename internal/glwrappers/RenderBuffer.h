@@ -3,45 +3,37 @@
 
 class RenderBuffer {
 
-private:
+    private:
+        GLuint m_RendererID;
 
-    GLuint m_RendererID;
+    public:
+        RenderBuffer() = default;
+        RenderBuffer(int width, int height);
+        ~RenderBuffer();
 
+        void AttachFramebuffer() const;
+        void Resize(int width, int height) const;
 
-public:
+        void Bind() const;
+        static void Unbind();
 
-    RenderBuffer() = default;
-    RenderBuffer(int width, int height);
-    ~RenderBuffer();
+        // Remove copying
 
-    void AttachFramebuffer() const;
-    void Resize(int width, int height) const;
+        RenderBuffer(const RenderBuffer&) = delete;
+        RenderBuffer& operator=(const RenderBuffer&) = delete;
 
-    void Bind() const;
-    static void Unbind();
-
-    // Remove copying
-    
-    RenderBuffer(const RenderBuffer&) = delete;
-    RenderBuffer& operator=(const RenderBuffer&) = delete;
-
-    RenderBuffer(RenderBuffer&& other) noexcept
-    : m_RendererID(other.m_RendererID)
-    {
-        other.m_RendererID = 0;
-    }
-
-    RenderBuffer& operator=(RenderBuffer&& other) noexcept
-    {
-        if (this != &other)
-        {
-            if (m_RendererID != 0)
-                glDeleteBuffers(1, &m_RendererID);  
-
-            m_RendererID = other.m_RendererID;
+        RenderBuffer(RenderBuffer&& other) noexcept : m_RendererID(other.m_RendererID) {
             other.m_RendererID = 0;
         }
-        return *this;
-    }
 
+        RenderBuffer& operator=(RenderBuffer&& other) noexcept {
+            if (this != &other) {
+                if (m_RendererID != 0)
+                    glDeleteBuffers(1, &m_RendererID);
+
+                m_RendererID = other.m_RendererID;
+                other.m_RendererID = 0;
+            }
+            return *this;
+        }
 };

@@ -1,11 +1,11 @@
 #pragma once
 
 #include "EntryPoint.h"
+#include "components/SceneManager.h"
 #include "graphics/Renderer.h"
 #include "graphics/Texture.h"
-#include "modules/resources/ResourceManager.h"
-#include "objects/SceneManager.h"
 #include "platform/Input.h"
 #include "platform/Window.h"
+#include "resources/ResourceManager.h"
 
 #define hs honse

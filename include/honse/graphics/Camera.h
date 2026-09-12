@@ -1,14 +1,13 @@
 #pragma once
-#include <memory>
 #include <glm/glm.hpp>
-#include <honse/modules/utilities/AABB.h>
+#include <honse/utilities/AABB.h>
+#include <memory>
 
 namespace honse {
 
-    class Camera {
+class Camera {
 
     public:
-
         glm::vec2 position = glm::vec2(0.0f);
         float rotation = 0.0f;
 
@@ -18,11 +17,10 @@ namespace honse {
         static AABB GetViewport();
 
         static Camera* GetMainCamera();
-        
+
         static void Init();
 
     private:
-
         static glm::mat4 getViewMatrix();
         static std::unique_ptr<Camera> m_Main;
 
@@ -30,7 +28,6 @@ namespace honse {
         AABB m_Viewport;
 
         friend class Renderer;
+};
 
-    };
-
-}
+} // namespace honse

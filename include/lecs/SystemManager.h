@@ -4,39 +4,43 @@
 #include <set>
 #include <unordered_map>
 
+namespace lecs {
+
 class World;
 
 class System {
 
-  public:
-    virtual ~System() = default;
-    virtual void Init(World& world) = 0;
-    virtual void Update(World& world) = 0;
+    public:
+        virtual ~System() = default;
+        virtual void Init(World& world) = 0;
+        virtual void Update(World& world) = 0;
 
-  private:
-    std::set<Entity> m_Entities;
+    private:
+        std::set<Entity> m_Entities;
 
-    friend class SystemManager;
+        friend class SystemManager;
 };
 
 class SystemManager {
 
-  public:
-    template <typename T> std::shared_ptr<T> RegisterSystem(World& world) {
+    public:
+        template <typename T> std::shared_ptr<T> RegisterSystem(World& world) {
 
-        auto system = std::make_shared<T>();
+            auto system = std::make_shared<T>();
 
-        m_Systems.insert({typeid(T).name(), system});
+            m_Systems.insert({ typeid(T).name(), system });
 
-        system->Init(world);
+            system->Init(world);
 
-        return system;
-    }
+            return system;
+        }
 
-    void OnEntityDestroyed(Entity entity);
+        void OnEntityDestroyed(Entity entity);
 
-    void Update(World& world);
+        void Update(World& world);
 
-  private:
-    std::unordered_map<const char*, std::shared_ptr<System>> m_Systems;
+    private:
+        std::unordered_map<const char*, std::shared_ptr<System>> m_Systems;
 };
+
+} // namespace lecs

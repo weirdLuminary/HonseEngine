@@ -5,26 +5,30 @@
 #include <queue>
 #include <vector>
 
+namespace lecs {
+
 class EntityManager {
 
-  public:
-    EntityManager();
+    public:
+        EntityManager();
 
-    Entity CreateEntity();
-    void DestroyEntity(Entity entity);
+        Entity CreateEntity();
+        void DestroyEntity(Entity entity);
 
-    void SetSignature(Entity entity, Signature signature);
-    Signature GetSignature(Entity entity);
+        void SetSignature(Entity entity, Signature signature);
+        Signature GetSignature(Entity entity);
 
-  private:
-    std::vector<Entity> m_ActiveEntities;
-    std::array<Signature, MAX_ENTITIES> m_Signatures;
+    private:
+        std::vector<Entity> m_ActiveEntities;
+        std::array<Signature, MAX_ENTITIES> m_Signatures;
 
-    std::queue<Entity> m_AvailableSlots;
+        std::queue<Entity> m_AvailableSlots;
 
-    uint32_t m_ActiveEntityCount{};
+        uint32_t m_ActiveEntityCount {};
 
-    friend class World;
+        friend class World;
 
-    template <typename...> friend class View;
+        template <typename...> friend class View;
 };
+
+} // namespace lecs
